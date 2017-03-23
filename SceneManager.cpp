@@ -1,5 +1,9 @@
 #include "SceneManager.h"
 #include "Game.h"
+#include "MainMenu.h"
+#include "Intro.h"
+#include "Initial.h"
+#include "Ending.h"
 
 Node* SceneManager::curScene = nullptr;
 Node* SceneManager::nextScene = nullptr;

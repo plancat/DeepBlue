@@ -392,6 +392,7 @@
     <ClCompile Include="Sprite.cpp" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Cheat.h" />
+    <ClInclude Include="Editor.h" />
     <ClInclude Include="Ending.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Initial.h" />

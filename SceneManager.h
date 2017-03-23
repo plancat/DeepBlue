@@ -3,12 +3,6 @@
 #include "pch.h"
 #include "Sprite.h"
 
-#include "MainMenu.h"
-#include "Intro.h"
-#include "Initial.h"
-#include "Ending.h"
-
-class Game;
 class SceneManager
 {
 public:

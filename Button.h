@@ -19,26 +19,25 @@ public:
 		if (texture != nullptr){
 			if (Contains(Input::GetMousePosition()))
 			{
+				// if (Input::KeyUp(VK_LBUTTON)){
+				// 	if (click){
+				// 		click = false;
+				// 	}
+				// }
+				
 				if (Input::KeyDown(VK_LBUTTON))
 				{
 					click = true;
-					value.scale = Vector2(1, 1);
+					onClick();
 				}
 
-				if (Input::KeyUp(VK_LBUTTON)){
-					if (click){
-						click = false;
-						onClick();
-					}
-				}
-
-				if (!click)
-					D3DXVec2Lerp(&value.scale, &value.scale, &Vector2(1.5, 1.5), 0.1f);
+				//if (!click)
+				//	D3DXVec2Lerp(&value.scale, &value.scale, &Vector2(1.5, 1.5), 0.1f);
 
 			}
 			else
 			{
-				D3DXVec2Lerp(&value.scale, &value.scale, &Vector2(1.0, 1.0), 0.1f);
+				// D3DXVec2Lerp(&value.scale, &value.scale, &Vector2(1.0, 1.0), 0.1f);
 			}
 		}
 	}
