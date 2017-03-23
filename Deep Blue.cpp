@@ -3,8 +3,8 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
-#include "DXUT.h"
-#include "resource.h"
+#include "pch.h"
+#include "SceneManager.h"
 
 
 //--------------------------------------------------------------------------------------
@@ -76,6 +76,7 @@ void CALLBACK OnD3D9FrameRender( IDirect3DDevice9* pd3dDevice, double fTime, flo
     // Render the scene
     if( SUCCEEDED( pd3dDevice->BeginScene() ) )
     {
+		SceneManager::SceneUpdate();
         V( pd3dDevice->EndScene() );
     }
 }
@@ -117,6 +118,9 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, int )
     _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
+	AllocConsole();
+	freopen("CONOUT$", "wt", stdout);
+
     // Set the callback functions
     DXUTSetCallbackD3D9DeviceAcceptable( IsD3D9DeviceAcceptable );
     DXUTSetCallbackD3D9DeviceCreated( OnD3D9CreateDevice );
@@ -135,7 +139,9 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, int )
     DXUTSetHotkeyHandling( true, true, true );  // handle the default hotkeys
     DXUTSetCursorSettings( true, true ); // Show the cursor and clip it when in full screen
     DXUTCreateWindow( L"Deep Blue" );
-    DXUTCreateDevice( true, 640, 480 );
+    DXUTCreateDevice( true, 1280, 720 );
+
+	SceneManager::LoadScene("MainMenu");
 
     // Start the render loop
     DXUTMainLoop();
