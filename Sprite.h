@@ -92,6 +92,7 @@ public:
 		sprites.push_back(this);
 	}
 
+
 	void OnUpdate() override{
 		Node::OnUpdate();
 		if (texture != nullptr){

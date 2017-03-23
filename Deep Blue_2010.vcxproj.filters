@@ -95,6 +95,9 @@
     <ClCompile Include="Input.cpp">
       <Filter>Src</Filter>
     </ClCompile>
+    <ClCompile Include="Cheat.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -132,6 +135,9 @@
     </ClInclude>
     <ClInclude Include="Initial.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Cheat.h">
+      <Filter>Src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

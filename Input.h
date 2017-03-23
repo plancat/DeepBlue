@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "Node.h"
 
-class Input : public Node
+class Input
 {
 public:
 	static vector<int> allKeys;
@@ -21,13 +21,10 @@ public:
 			press.insert({ key, false });
 	}
 
-	void OnUpdate() override {
+	static void Update() {
 		for (auto it : allKeys){
-			if (GetKey(it)){
-				// KeyDown(it);
-				KeyPress(it);
-				KeyUp(it);
-			}
+			KeyPress(it);
+			KeyUp(it);
 		}
 	}
 
@@ -38,7 +35,7 @@ public:
 			{
 				up[key] = false;
 				down[key] = true;
-				cout << "D" << endl;
+				//cout << "D" << endl;
 				return true;
 			}
 			else
@@ -48,6 +45,7 @@ public:
 		}
 		return false;
 	}
+
 	static bool KeyUp(int key){
 		if (!GetKey(key)){
 			IsValid(key);
@@ -55,7 +53,7 @@ public:
 				down[key] = false;
 				press[key] = false;
 				up[key] = true;
-				cout << "U" << endl;
+				//cout << "U" << endl;
 				return true;
 			}
 			else
@@ -69,7 +67,7 @@ public:
 			if (down[key])
 			{
 				press[key] = true;
-				cout << "P" << endl;
+				//cout << "P" << endl;
 				return true;
 			}
 			else

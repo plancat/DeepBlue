@@ -5,5 +5,11 @@
 class Initial : public Node
 {
 public:
+	Initial(){
+		cout << "Initial" << endl;
+	}
 
+	void OnUpdate() override {
+
+	}
 };

@@ -384,12 +384,14 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cheat.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="Cheat.h" />
     <ClInclude Include="Ending.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Initial.h" />

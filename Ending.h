@@ -5,5 +5,7 @@
 class Ending : public Node
 {
 public:
-
+	Ending(){
+		cout << "Ending" << endl;
+	}
 };
