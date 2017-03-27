@@ -16,3 +16,5 @@ using namespace std;
 typedef D3DXVECTOR2 Vector2;
 typedef D3DXVECTOR3 Vector3;
 typedef D3DXCOLOR Color;
+
+extern float dt;

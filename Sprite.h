@@ -62,6 +62,8 @@ public:
 	}
 
 	void Play(){
+		curIdx = 0;
+		currenDelaytTime = 0;
 		animationEnable = true;
 	}
 
@@ -85,6 +87,12 @@ public:
 	Color color = { 1, 1, 1, 1 };
 	bool debug = false;
 public:
+	Sprite(){
+		texture = nullptr;
+		if (sprite == nullptr)
+			D3DXCreateSprite(DXUTGetD3D9Device(), &sprite);
+		sprites.push_back(this);
+	}
 	Sprite(const string& path){
 		texture = Texture::Load(path);
 		if (sprite == nullptr)
@@ -147,10 +155,9 @@ public:
 					it->value.rect.lefttop,
 				};
 				line->Begin();
-				line->Draw(linepos, 5, 0xFFFFFFFF);
+				line->Draw(linepos, 5, Color(1,0,0,1));
 				line->End();
 				line->Release();
-
 			}
 		}
 	}

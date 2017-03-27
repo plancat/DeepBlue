@@ -23,6 +23,7 @@ public:
 
 	static void Update() {
 		for (auto it : allKeys){
+			KeyDown(it);
 			KeyPress(it);
 			KeyUp(it);
 		}
@@ -35,7 +36,6 @@ public:
 			{
 				up[key] = false;
 				down[key] = true;
-				//cout << "D" << endl;
 				return true;
 			}
 			else
@@ -53,7 +53,6 @@ public:
 				down[key] = false;
 				press[key] = false;
 				up[key] = true;
-				//cout << "U" << endl;
 				return true;
 			}
 			else
@@ -67,7 +66,6 @@ public:
 			if (down[key])
 			{
 				press[key] = true;
-				//cout << "P" << endl;
 				return true;
 			}
 			else

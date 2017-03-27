@@ -387,10 +387,11 @@
     <ClCompile Include="Cheat.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Node.cpp" />
+    <ClCompile Include="Path.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Sprite.cpp" />
-    <ClInclude Include="Button.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Cheat.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="Ending.h" />
@@ -400,8 +401,11 @@
     <ClInclude Include="Intro.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Path.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="UI.h" />
+    <ClInclude Include="UnitBase.h" />
     <None Include="DXUT\Optional\directx.ico" />
     <ClInclude Include="DXUT\Core\DXUT.h" />
     <ClInclude Include="DXUT\Core\DXUTenum.h" />

@@ -24,7 +24,7 @@ private:
 					tmpNames.push_back(tmp);
 				}
 			} while (FindNextFileA(hFind, &fd));
-			FindClose(&fd);
+			FindClose(&hFind);
 		}
 	}
 };
