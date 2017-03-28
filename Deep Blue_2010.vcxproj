@@ -384,6 +384,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Cheat.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Node.cpp" />
@@ -391,6 +392,7 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="UnitBase.cpp" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Cheat.h" />
     <ClInclude Include="Editor.h" />

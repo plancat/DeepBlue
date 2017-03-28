@@ -8,8 +8,6 @@
 Node* SceneManager::curScene = nullptr;
 Node* SceneManager::nextScene = nullptr;
 
-int Game::stage = 0;
-
 void SceneManager::LoadScene(const string& name)
 {
 	Sprite::Clear();

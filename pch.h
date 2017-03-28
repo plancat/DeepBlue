@@ -11,6 +11,7 @@
 #include <queue>
 #include <map>
 #include <fstream>
+#include <time.h>
 
 using namespace std;
 
@@ -20,6 +21,7 @@ typedef D3DXCOLOR Color;
 
 extern float dt;
 extern int game_score;
+extern int game_stage;
 
 class Input;
 extern Input* input;

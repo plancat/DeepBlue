@@ -9,7 +9,7 @@
 #include "SceneManager.h"
 
 #include "Player.h"
-#include "MonsterBase.h"
+#include "NormalMonster.h"
 
 class Game : public Node
 {
@@ -21,16 +21,20 @@ public:
 	Player* player;
 	MonsterBase* test;
 	Editor* editor;
-	static int stage;
 public:
 	Game(){
+		// 스테이지 지정
+		game_stage = 1;
 		editor = new Editor();
 		this->Attach(editor);
 		input = new Input();
 		this->Attach(input);
 
-		//test = new MonsterBase(4, 0.1f, 2, 20);
-		//this->Attach(test);
+		auto normal = new NormalMonster();
+		normal->value = Editor::GetValue("Unit/Normal");
+		normal->debug = true;
+		// editor->AddEditor(normal, "Unit/Normal");
+		this->Attach(normal);
 
 		PlayerInit();
 		HudInit();

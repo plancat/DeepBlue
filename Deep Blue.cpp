@@ -142,6 +142,8 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, int )
     DXUTCreateWindow( L"Deep Blue" );
     DXUTCreateDevice( true, 1280, 720 );
 
+	srand(time(nullptr));
+
 	SceneManager::LoadScene("Game");
 
     // Start the render loop

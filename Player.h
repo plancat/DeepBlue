@@ -1,13 +1,15 @@
 #pragma once
 #include "UnitBase.h"
 #include "Input.h"
-#include "Bullet.h"
 
 class Player : public UnitBase
 {
 private:
-	vector<Bullet*> bullets;
 	float bulletTime;
+	int thirdBulletCnt;
+	bool thirdBullet = false;
+	int finalBulletCnt;
+	bool finalBullet = false;
 public:
 	Vector2 speed;
 public:
@@ -23,9 +25,14 @@ public:
 			auto bullet = new Bullet(BulletType::PLAYER, Vector2(0, -1));
 			bullet->visible = false;
 			bullet->enable = false;
-			bullet->collision = [=](Sprite* bullet)
+			bullet->value.scale = { 0.3f, 0.3f };
+			bullet->value.rectScale = { 0.2f, 0.2f };
+			bullet->collision = [=](Sprite* bullet, UnitBase* target)
 			{
+				bullet->visible = false;
+				bullet->enable = false;
 
+				target->Damage(1);
 			};
 			bullets.push_back(bullet);
 		}
@@ -56,6 +63,7 @@ public:
 
 			value.position += speed;
 
+			// ±âº» ¾î·Ú
 			if (input->KeyStay('Z')){
 				bulletTime += dt;
 				if (bulletTime >= 0.1f){
@@ -63,24 +71,58 @@ public:
 					auto bullet = getBullet();
 					if (bullet != nullptr){
 						bullet->texture = Texture::Load("Torpedo/Torpedo_0.png");
-						bullet->value.scale = { 0.3f, 0.3f };
-						bullet->value.rectScale = { 0.2f, 0.2f };
+						bullet->value.angle = 0.0f;
+						bullet->dir = { 0, -1 };
 						bullet->speed = -200;
 						bullet->value.position = this->value.position + Vector2(0, -5);
 					}
 				}
 			}
-		}
-	}
 
-	Bullet* getBullet(){
-		for (auto it : bullets){
-			if (!it->visible)
-			{
-				it->enable = true;
-				it->visible = true;
-				return it;
+			// 3¹æÇâ ¾î·Ú
+			if (input->KeyDown('X')){
+				if (!thirdBullet){
+					thirdBullet = true;
+					for (int i = 0; i < 3; i++){
+						auto bullet = getBullet();
+						if (bullet != nullptr){
+							bullet->texture = Texture::Load("Torpedo/Torpedo_1.png");
+							bullet->value.angle = 0.0f;
+							bullet->dir = { 0, -1 };
+							bullet->speed = (rand() % 280 + 250)* -1;
+							if (i == 0){
+								bullet->value.position = this->value.position + Vector2(0, -5);
+							}
+							else if (i == 1){
+								bullet->value.position = this->value.position + Vector2(-15, 15);
+							}
+							else if (i == 2)
+							{
+								bullet->value.position = this->value.position + Vector2(15, 15);
+							}
+						}
+					}
+				}
 			}
+			else
+				thirdBullet = false;
+
+			// ÇÙÅºµÎ
+			if (input->KeyDown('C')){
+				if (!finalBullet){
+					finalBullet = true;
+					auto bullet = getBullet();
+					if (bullet != nullptr){
+						bullet->texture = Texture::Load("Torpedo/Torpedo_3.png");
+						bullet->dir = { 0, -1 };
+						bullet->value.angle = 0.0f;
+						bullet->speed = -200;
+						bullet->value.position = this->value.position + Vector2(0, -5);
+					}
+				}
+			}
+			else
+				finalBullet = false;
 		}
 	}
 };

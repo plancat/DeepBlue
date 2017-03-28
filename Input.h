@@ -11,11 +11,13 @@ public:
 public:
 	void UpdateKey(int key) {
 		int state = GetAsyncKeyState(key);
-		if (state & 0x8001){
+		if (state & 0x8001)
+		{
 			if (state & 0x8001)
 				keyDown[key] = true;
 			else
 				keyDown[key] = false;
+		
 			keyStay[key] = true;
 		}
 		else

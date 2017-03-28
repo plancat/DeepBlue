@@ -3,3 +3,4 @@
 float dt = 0.016;
 vector<RankingData> RankingData::rankingDatas;
 int game_score = 0;
+int game_stage = 1;

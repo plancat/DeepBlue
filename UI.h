@@ -3,6 +3,8 @@
 #include "Sprite.h"
 #include "Input.h"
 
+/* 정신 차리고 다시 수식을 짜기*/
+
 class FillSprite : public Node
 {
 private:
@@ -10,8 +12,18 @@ private:
 public:
 	FillSprite(const string& path) {
 		fillSprite = new Sprite(path);
-		fillSprite->value.scale.x = 30;
-		fillSprite->value.position.x -= 15;
+		fillSprite->value.scale.x = 200;
+		fillSprite->value.position.x -= 0;
+		this->Attach(fillSprite);
+	}
+
+	void SetValue(int value){
+		if (value > 100)
+			value = 100;
+		else if (value < 0)
+			value = 0;
+
+		fillSprite->value.scale.x = value;
 	}
 };
 
