@@ -19,8 +19,8 @@ public:
 		this->debug = true;
 		bulletTime = 0.0f;
 
-		for (int i = 0; i < 30; i++){
-			auto bullet = new Bullet(BulletType::PLAYER, Vector2(0, -1), 700);
+		for (int i = 0; i < 10; i++){
+			auto bullet = new Bullet(BulletType::PLAYER, Vector2(0, -1));
 			bullet->visible = false;
 			bullet->enable = false;
 			bullet->collision = [=](Sprite* bullet)
@@ -43,18 +43,14 @@ public:
 	void KeyInput()
 	{
 		if (dt >= 0){
-			if (input->KeyStay(VK_DOWN)){
+			if (input->KeyStay(VK_DOWN))
 				speed.y += 1;
-			}
-			if (input->KeyStay(VK_UP)){
+			if (input->KeyStay(VK_UP))
 				speed.y -= 1;
-			}
-			if (input->KeyStay(VK_LEFT)){
+			if (input->KeyStay(VK_LEFT))
 				speed.x -= 1;
-			}
-			if (input->KeyStay(VK_RIGHT)){
+			if (input->KeyStay(VK_RIGHT))
 				speed.x += 1;
-			}
 
 			speed *= 0.9f;
 
@@ -64,16 +60,26 @@ public:
 				bulletTime += dt;
 				if (bulletTime >= 0.1f){
 					bulletTime = 0.0f;
-					for (auto it : bullets){
-						if (!it->visible)
-						{
-							it->enable = true;
-							it->visible = true;
-							it->value.position = this->value.position + Vector2(0, -5);
-							break;
-						}
+					auto bullet = getBullet();
+					if (bullet != nullptr){
+						bullet->texture = Texture::Load("Torpedo/Torpedo_0.png");
+						bullet->value.scale = { 0.3f, 0.3f };
+						bullet->value.rectScale = { 0.2f, 0.2f };
+						bullet->speed = -200;
+						bullet->value.position = this->value.position + Vector2(0, -5);
 					}
 				}
+			}
+		}
+	}
+
+	Bullet* getBullet(){
+		for (auto it : bullets){
+			if (!it->visible)
+			{
+				it->enable = true;
+				it->visible = true;
+				return it;
 			}
 		}
 	}

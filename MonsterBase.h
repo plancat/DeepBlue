@@ -29,7 +29,7 @@ public:
 		prevAttackDelay = 0.0f;
 		prevNextAttackDelay = 0.0f;
 		for (int i = 0; i < bulletCnt; i++){
-			auto bullet = new Bullet(BulletType::MONSTER, { 0, 1 }, 50);
+			auto bullet = new Bullet(BulletType::MONSTER, { 0, 1 });
 			bullet->visible = false;
 			bullet->enable = false;
 			bullets.push_back(bullet);

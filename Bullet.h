@@ -15,12 +15,14 @@ public:
 	BulletType bulletType;
 	function<void(Sprite*)> collision;
 
-	Bullet(BulletType bulletType, Vector2 dir, float speed) : bulletType(bulletType), dir(dir), speed(speed) {
+	Bullet(BulletType bulletType, Vector2 dir) : bulletType(bulletType), dir(dir) {
 		collision = [=](Sprite* temp){};
 		this->texture = Texture::Load("bullet.png");
+		sprites.push_back(this);
 	}
 
 	void OnUpdate() override {
+		speed += dt * 700;
 		value.position += dir * speed * dt;
 		for (auto it : UnitBase::units){
 			if (it->IntersectRect(this))

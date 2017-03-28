@@ -29,8 +29,8 @@ public:
 		input = new Input();
 		this->Attach(input);
 
-		test = new MonsterBase(4, 0.1f, 2, 20);
-		this->Attach(test);
+		//test = new MonsterBase(4, 0.1f, 2, 20);
+		//this->Attach(test);
 
 		PlayerInit();
 		HudInit();
@@ -53,7 +53,7 @@ public:
 		playerHealthBar = new Node();
 		this->Attach(playerHealthBar);
 		playerHealthBar->value = Editor::GetValue("Scene/Game/playerHealthBar");
-		editor->AddEditor(playerHealthBar, "Scene/Game/playerHealthBar");
+		// editor->AddEditor(playerHealthBar, "Scene/Game/playerHealthBar");
 		for (int i = 0; i < 5; i++){
 			hearts[i] = new Sprite("heart.png");
 			hearts[i]->value.position.y -= 40 * i;
@@ -74,8 +74,8 @@ public:
 		Cheat::Update();
 		HudUpdate();
 
-		if (input->KeyDown(VK_SPACE)){
-			test->Attack();
-		}
+		//if (input->KeyDown(VK_SPACE)){
+		//	test->Attack();
+		//}
 	}
 };
