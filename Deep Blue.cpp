@@ -4,8 +4,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 #include "pch.h"
+#include "Input.h"
 #include "SceneManager.h"
-
+Input* input;
 
 //--------------------------------------------------------------------------------------
 // Rejects any D3D9 devices that aren't acceptable to the app by returning false

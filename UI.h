@@ -3,10 +3,16 @@
 #include "Sprite.h"
 #include "Input.h"
 
-class FillSprite : public Sprite
+class FillSprite : public Node
 {
+private:
+	Sprite* fillSprite;
 public:
-
+	FillSprite(const string& path) {
+		fillSprite = new Sprite(path);
+		fillSprite->value.scale.x = 30;
+		fillSprite->value.position.x -= 15;
+	}
 };
 
 class Dialog : public Node
@@ -45,7 +51,7 @@ public:
 		Node::OnUpdate();
 		if (texture != nullptr)
 		{
-			if (Input::KeyUp(VK_LBUTTON)){
+			if (input->KeyUp(VK_LBUTTON)){
 				if (click){
 					click = false;
 				}
@@ -53,7 +59,7 @@ public:
 
 			if (Contains(Input::GetMousePosition()))
 			{
-				if (Input::KeyDown(VK_LBUTTON)){
+				if (input->KeyDown(VK_LBUTTON)){
 					click = true;
 					onClick();
 				}
@@ -65,15 +71,5 @@ public:
 				D3DXVec2Lerp(&value.scale, &value.scale, &Vector2(1.0, 1.0), 0.1f);
 			}
 		}
-	}
-};
-
-class Text : public Node
-{
-public:
-	string text;
-public:
-	Text(const string& text) : text(text) {
-
 	}
 };

@@ -396,10 +396,13 @@
     <ClInclude Include="Editor.h" />
     <ClInclude Include="Ending.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="HardMonster.h" />
     <ClInclude Include="Initial.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Intro.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="MonsterBase.h" />
+    <ClInclude Include="NormalMonster.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SceneManager.h" />

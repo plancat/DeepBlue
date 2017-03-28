@@ -1,7 +1,6 @@
 #pragma once
 #include "pch.h"
 #include "Node.h"
-#include <fstream>
 
 class Editor : public Node
 {

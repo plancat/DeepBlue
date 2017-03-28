@@ -5,9 +5,11 @@
 
 class Player : public UnitBase
 {
-public:
+private:
 	vector<Bullet*> bullets;
 	float bulletTime;
+public:
+	Vector2 speed;
 public:
 	Player() {
 		this->AddAnimation(new Animation("Unit/Player", 0.1f, true));
@@ -41,16 +43,16 @@ public:
 	void KeyInput()
 	{
 		if (dt >= 0){
-			if (Input::KeyPress(VK_DOWN)){
+			if (input->KeyStay(VK_DOWN)){
 				speed.y += 1;
 			}
-			if (Input::KeyPress(VK_UP)){
+			if (input->KeyStay(VK_UP)){
 				speed.y -= 1;
 			}
-			if (Input::KeyPress(VK_LEFT)){
+			if (input->KeyStay(VK_LEFT)){
 				speed.x -= 1;
 			}
-			if (Input::KeyPress(VK_RIGHT)){
+			if (input->KeyStay(VK_RIGHT)){
 				speed.x += 1;
 			}
 
@@ -58,7 +60,7 @@ public:
 
 			value.position += speed;
 
-			if (Input::KeyPress('Z')){
+			if (input->KeyStay('Z')){
 				bulletTime += dt;
 				if (bulletTime >= 0.1f){
 					bulletTime = 0.0f;

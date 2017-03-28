@@ -1,24 +1,50 @@
 #pragma once
 #include "pch.h"
 #include "Node.h"
-#include "Cheat.h"
 
 class Intro : public Node
 {
-private:
-	Sprite* background;
 public:
-	Intro(){
-		background = new Sprite("Scenes/intro.png");
-		background->value.position = Vector2(640, 360);
-		this->Attach(background);
+	Sprite* prevScene;
+	Sprite* nextScene;
+
+	Sprite* background[3];
+	int curIdx = 0;
+public:
+	Intro()
+	{
+		for (int i = 0; i < 3; i++){
+			background[i] = new Sprite("Scenes/Ending/" + to_string(i + 1) + ".png");
+			background[i]->value.position = { 640, 360 };
+			background[i]->color.a = 0;
+			this->Attach(background[i]);
+		}
+		curIdx = 0;
+		prevScene = background[0];
+		prevScene->color.a = 1.0f;
+		nextScene = nullptr;
 	}
 
 	void OnUpdate() override {
-		background->color.a -= dt * 0.1;
-		if (background->color.a < 0){
-			enable = false;
-			SceneManager::LoadScene("MainMenu");
+		if (input->KeyDown(VK_SPACE)){
+			curIdx += 1;
+			if (curIdx > 2){
+				prevScene = nullptr;
+				nextScene = nullptr;
+				SceneManager::LoadScene("MainMenu");
+				return;
+			}
+			else
+				nextScene = background[curIdx];
+		}
+
+		if (nextScene != nullptr){
+			nextScene->color.a += dt;
+			prevScene->color.a -= dt;
+			if (nextScene->color > 1.0f && prevScene->color < 0.0f){
+				prevScene = nextScene;
+				nextScene = nullptr;
+			}
 		}
 	}
 };

@@ -27,17 +27,14 @@
     <Filter Include="Game\Unit\Player">
       <UniqueIdentifier>{e080f1a2-0851-4050-ae5b-b02b9d7370ee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Unit\Normal Monster">
-      <UniqueIdentifier>{bd5584f2-ed2e-451a-946a-bf77dd7bee54}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Unit\Hard Monster">
-      <UniqueIdentifier>{52db2b7c-c096-4fdf-b12b-e81283f96b5a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Bullet">
       <UniqueIdentifier>{839c4a32-3091-4cef-a814-a96e57dccdc2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game\Scenes">
       <UniqueIdentifier>{77aa3250-23b4-496e-9533-2f87514bbada}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Unit\Monster">
+      <UniqueIdentifier>{b4e09d26-a393-4b03-99cd-50717bf53819}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -174,6 +171,15 @@
     </ClInclude>
     <ClInclude Include="Bullet.h">
       <Filter>Game\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterBase.h">
+      <Filter>Game\Unit\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="NormalMonster.h">
+      <Filter>Game\Unit\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="HardMonster.h">
+      <Filter>Game\Unit\Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

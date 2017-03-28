@@ -2,82 +2,59 @@
 #include "pch.h"
 #include "Node.h"
 
-class Input
+class Input : public Node
 {
 public:
-	static vector<int> allKeys;
-	static map<int, bool> down;
-	static map<int, bool> up;
-	static map<int, bool> press;
+	map<int, bool> keyDown;
+	map<int, bool> keyStay;
+	map<int, bool> keyUp;
 public:
-	static void IsValid(int key){
-		if (find(allKeys.begin(), allKeys.end(), key) == allKeys.end())
-			allKeys.push_back(key);
-		if (down.find(key) == down.end())
-			down.insert({ key, false });
-		if (up.find(key) == up.end())
-			up.insert({ key, false });
-		if (press.find(key) == press.end())
-			press.insert({ key, false });
-	}
-
-	static void Update() {
-		for (auto it : allKeys){
-			KeyDown(it);
-			KeyPress(it);
-			KeyUp(it);
+	void UpdateKey(int key) {
+		int state = GetAsyncKeyState(key);
+		if (state & 0x8001){
+			if (state & 0x8001)
+				keyDown[key] = true;
+			else
+				keyDown[key] = false;
+			keyStay[key] = true;
 		}
-	}
-
-	static bool KeyDown(int key){
-		if (GetKey(key)){
-			IsValid(key);
-			if (!down[key])
-			{
-				up[key] = false;
-				down[key] = true;
-				return true;
+		else
+		{
+			if (keyStay[key]){
+				keyDown[key] = false;
+				keyStay[key] = false;
+				keyUp[key] = true;
 			}
 			else
 			{
-				return false;
+				keyDown[key] = false;
+				keyStay[key] = false;
+				keyUp[key] = false;
 			}
 		}
-		return false;
 	}
 
-	static bool KeyUp(int key){
-		if (!GetKey(key)){
-			IsValid(key);
-			if (down[key] && !up[key]){
-				down[key] = false;
-				press[key] = false;
-				up[key] = true;
-				return true;
-			}
-			else
-				return false;
-		}
-		return false;
+	bool KeyDown(int key){
+		return keyDown[key];
 	}
-	static bool KeyPress(int key){
-		if (GetKey(key)){
-			IsValid(key);
-			if (down[key])
-			{
-				press[key] = true;
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		return false;
+	bool KeyUp(int key){
+		return keyUp[key];
+	}
+	bool KeyStay(int key){
+		return keyStay[key];
 	}
 
-	static bool GetKey(int key){
-		return GetAsyncKeyState(key) & 0x8001;
+	void OnUpdate() override {
+		UpdateKey(VK_LBUTTON);
+		UpdateKey(VK_UP);
+		UpdateKey(VK_LEFT);
+		UpdateKey(VK_RIGHT);
+		UpdateKey(VK_DOWN);
+		UpdateKey(VK_SPACE);
+		UpdateKey(VK_ESCAPE);
+		for (int i = 'A'; i <= 'Z'; i++){
+			UpdateKey(i);
+		}
 	}
 
 	static Vector2 GetMousePosition(){

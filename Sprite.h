@@ -36,7 +36,7 @@ public:
 		texture->width = info.Width;
 		texture->height = info.Height;
 
-		cout << "Texture Load : " << name << endl;
+		// cout << "Texture Load : " << name << endl;
 
 		textures.insert({ name, texture });
 		return texture;

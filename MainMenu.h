@@ -28,6 +28,10 @@ public:
 	{
 		editor = new Editor();
 		this->Attach(editor);
+
+		input = new Input();
+		this->Attach(input);
+
 		ismenu = false;
 		isranking = false;
 		istutorial = false;
@@ -105,9 +109,6 @@ public:
 	}
 
 	void OnUpdate() override {
-		Input::Update();
-		Cheat::Update();
-
 		if (isranking)
 			rankingLayer->Show(Vector2(0, 0));
 		else
@@ -118,7 +119,7 @@ public:
 		else
 			tutorialLayer->Hide(Vector2(-1280, 0));
 
-		if (Input::KeyDown(VK_ESCAPE)){
+		if (input->KeyDown(VK_ESCAPE)){
 			if (isranking){
 				isranking = false;
 			}
@@ -128,7 +129,7 @@ public:
 			}
 		}
 
-		if (Input::KeyDown(VK_SPACE)){
+		if (input->KeyDown(VK_SPACE)){
 			if (!ismenu){
 				ismenu = true;
 				pressButton->visible = false;
@@ -149,5 +150,7 @@ public:
 				}
 			}
 		}
+
+		Cheat::Update();
 	}
 };

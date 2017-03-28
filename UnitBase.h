@@ -8,8 +8,14 @@ public:
 	static vector<UnitBase*> units;
 public:
 	int health;
-	int power;
-	Vector2 speed;
+
+	void Damage(int power){
+		health -= power;
+		if (health < 0){
+			this->visible = false;
+			this->enable = false;
+		}
+	}
 };
 
 vector<UnitBase*> UnitBase::units;
