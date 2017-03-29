@@ -129,10 +129,12 @@ public:
 		texts.clear();
 		for (int i = 0; i < text.size(); i++){
 			Text* tmp = new Text();
-			tmp->SetString(text[i]);
-			tmp->value.position.x = 200 * i;
-			this->Attach(tmp);
-			texts.push_back(tmp);
+			if (text[i] != ' ' || text[i] != '-'){
+				tmp->SetString(text[i]);
+				tmp->value.position.x = 170 * i;
+				this->Attach(tmp);
+				texts.push_back(tmp);
+			}
 		}
 	}
 };

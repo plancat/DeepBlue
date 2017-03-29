@@ -42,6 +42,7 @@ private:
 	bool boss1_clear;
 
 	TextString* gameScoreText;
+	TextString* gameStageText;
 public:
 	Game(){
 		editor = new Editor();
@@ -187,6 +188,10 @@ public:
 			SceneManager::LoadScene("MainMenu");
 		};
 		failLayer->Attach(button);
+
+		pauseLayer->zOrder = 6;
+		clearLayer->zOrder = 6;
+		failLayer->zOrder = 6;
 	}
 
 	void PlayerInit(){
@@ -219,11 +224,13 @@ public:
 	void HudInit(){
 		Sprite* background = new Sprite("UI/UI_1.png");
 		background->value.position = { 640, 360 };
+		background->zOrder = 4;
 		this->Attach(background);
 
 		playerHealthBar = new Node();
-		this->Attach(playerHealthBar);
 		playerHealthBar->value = Editor::GetValue("Scene/Game/playerHealthBar");
+		playerHealthBar->zOrder = 5;
+		this->Attach(playerHealthBar);
 		for (int i = 0; i < 5; i++){
 			hearts[i] = new Sprite("UI/UI_3.png");
 			hearts[i]->value.position.y -= 30 * i;
@@ -233,13 +240,22 @@ public:
 		bossHealthBackground = new Sprite("UI/UI_13.png");
 		bossHealthBackground->value.position = { 640, 360 };
 		bossHealthBackground->visible = false;
+		bossHealthBackground->zOrder = 4;
 		this->Attach(bossHealthBackground);
 
 		gameScoreText = new TextString();
 		gameScoreText->value = Editor::GetValue("Scene/Game/gameScore");
 		gameScoreText->SetString(to_string(game_score));
-		editor->AddEditor(gameScoreText, "Scene/Game/gameScore");
+		gameScoreText->zOrder = 4;
+		// editor->AddEditor(gameScoreText, "Scene/Game/gameScore");
 		this->Attach(gameScoreText);
+
+		gameStageText = new TextString();
+		gameStageText->SetString("STAGE");
+		gameStageText->value = Editor::GetValue("Scene/Game/gameStage");
+		gameStageText->zOrder = 4;
+		editor->AddEditor(gameStageText, "Scene/Game/gameStage");
+		this->Attach(gameStageText);
 	}
 
 	void HudUpdate(){
@@ -251,6 +267,30 @@ public:
 
 		if (bossHealthBar != nullptr && hardMonster != nullptr)
 			bossHealthBar->SetValue(hardMonster->health);
+
+		if (gameScoreText != nullptr)
+			gameScoreText->SetString(to_string(game_score));
+
+		if (gameStageText != nullptr){
+			if (game_stage == 1){
+				if (!boss1_clear){
+					gameStageText->SetString("STAGE11");
+				}
+				else
+				{
+					gameStageText->SetString("STAGE12");
+				}
+			}
+			else if (game_stage == 2){
+				if (!boss1_clear){
+					gameStageText->SetString("STAGE21");
+				}
+				else
+				{
+					gameStageText->SetString("STAGE22");
+				}
+			}
+		}
 	}
 
 	void OnUpdate() override {
@@ -315,9 +355,6 @@ public:
 		if (input->KeyDown('N')){
 			hardMonster->Damage(50);
 		}
-
-		if (gameScoreText!= nullptr)
-			gameScoreText->SetString(to_string(game_score));
 	}
 
 	UnitBase* getMonster(){

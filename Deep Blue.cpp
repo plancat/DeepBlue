@@ -145,7 +145,7 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, int )
 
 	srand(time(nullptr));
 
-	SceneManager::LoadScene("Game");
+	SceneManager::LoadScene("MainMenu");
 
     // Start the render loop
     DXUTMainLoop();

@@ -40,6 +40,9 @@ public:
 
 	}
 	RankingData(const string str[3], int score){
+		name.push_back(str[0][0]);
+		name.push_back(str[1][0]);
+		name.push_back(str[2][0]);
 		this->score = score;
 	}
 private:

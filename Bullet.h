@@ -5,7 +5,7 @@
 enum class BulletType{
 	PLAYER, MONSTER
 };
- 
+
 class UnitBase;
 class Bullet : public Sprite
 {
@@ -23,9 +23,11 @@ public:
 		this->texture = Texture::Load("bullet.png");
 		sprites.push_back(this);
 		effect = new Sprite();
-		//delayComment.push([=](){
-		//	this->parent->Attach(effect);
-		//});
+		delayComment.push([=](){
+			delayComment.push([=](){
+				this->parent->Attach(effect);
+			});
+		});
 	}
 
 	void Init(){

@@ -59,6 +59,8 @@ public:
 	}
 
 	void Draw(){
+		sort(children.begin(), children.end(), [=](const Node* a, const Node* b){return a->zOrder < b->zOrder; });
+
 		if (visible){
 			OnDraw();
 			for (auto it : children)
@@ -78,6 +80,8 @@ public:
 	}
 
 	static void RootDraw(){
+		sort(roots.begin(), roots.end(), [=](const Node* a, const Node* b){return a->zOrder < b->zOrder; });
+
 		for (auto it : roots)
 			it->Draw();
 	}
