@@ -18,6 +18,7 @@ private:
 	// Hud
 	Node* playerHealthBar;
 	Sprite* hearts[5];
+	Node* backgroundLayer;
 
 	Editor* editor;
 	float prevMonsterCreate;
@@ -29,39 +30,37 @@ private:
 	vector<NormalMonster*> monsters;
 	vector<Sprite*> backgrounds;
 
+	Node* pauseLayer;
+	Node* clearLayer;
+	Node* failLayer;
+
 	bool pause = false;
-	bool showBoss;
 	bool boss1_clear;
-	bool boss2_clear;
 public:
 	Game(){
 		editor = new Editor();
 		this->Attach(editor);
 		input = new Input();
 		this->Attach(input);
-		// 스테이지 지정
-		game_stage = 1;
+		backgroundLayer = new Node();
+		this->Attach(backgroundLayer);
 
-		if (game_stage == 1){
+		if (game_stage == 1)
 			backgrounds = Editor::GetBackgrounds("Scene/Game/Game1");
-		}
-		else if (game_stage == 2){
+		else if (game_stage == 2)
 			backgrounds = Editor::GetBackgrounds("Scene/Game/Game2");
+
+		for (auto it : backgrounds){
+			backgroundLayer->Attach(it);
 		}
-		for (auto it : backgrounds)
-			this->Attach(it);
 
 		hardMonster = new HardMonster();
 		hardMonster->Hide();
 		hardMonster->Init(1);
-		// hardMonster->debug = true;
 		hardMonster->value = Editor::GetValue("Unit/Hard");
 		this->Attach(hardMonster);
-		// editor->AddEditor(hardMonster, "Unit/Hard");s
 
-		showBoss = false;
-		boss1_clear = false;
-		boss2_clear = false;
+		boss1_clear = true;
 
 		prevMonsterCreate = 0.0f;
 		nextMonsterCreate = 3;
@@ -69,7 +68,6 @@ public:
 		for (int i = 0; i < 10; i++){
 			auto normal = new NormalMonster();
 			normal->value = Editor::GetValue("Unit/Normal");
-			// normal->debug = true;
 			normal->Init();
 			normal->visible = false;
 			normal->enable = false;
@@ -80,7 +78,102 @@ public:
 		PlayerInit();
 		HudInit();
 
-		cout << "Game" << endl;
+		LayerInit();
+	}
+
+	void LayerInit(){
+		pauseLayer = new Node();
+		pauseLayer->visible = false;
+		pauseLayer->enable = false;
+		this->Attach(pauseLayer);
+		Sprite* background = new Sprite("UI/UI_12.png");
+		background->value.position = { 640, 360 };
+		pauseLayer->Attach(background);
+
+		auto button = new Button("UI/UI_9.png");
+		button->value = Editor::GetValue("Scene/Game/P_RESUME");
+		button->onClick = [=]()
+		{
+			pauseLayer->visible = false;
+			pauseLayer->enable = false;
+			pause = false;
+		};
+		pauseLayer->Attach(button);
+
+		button = new Button("UI/UI_7.png");
+		button->value = Editor::GetValue("Scene/Game/P_RETRY");
+		button->onClick = [=]()
+		{
+			SceneManager::LoadScene("Game");
+		};
+		pauseLayer->Attach(button);
+
+		button = new Button("UI/UI_8.png");
+		button->value = Editor::GetValue("Scene/Game/P_EXIT");
+		button->onClick = [=]()
+		{
+			SceneManager::LoadScene("MainMenu");
+		};
+		pauseLayer->Attach(button);
+
+		// ====================================
+		clearLayer = new Node();
+		clearLayer->enable = false;
+		clearLayer->visible = false;
+		this->Attach(clearLayer);
+		background = new Sprite("UI/UI_4.png");
+		background->value.position = { 640, 360 };
+		clearLayer->Attach(background);
+
+		button = new Button("UI/UI_6.png");
+		button->value = Editor::GetValue("Scene/Game/C_NEXT");
+		button->onClick = [=]()
+		{
+			if (game_stage == 1){
+				game_stage = 2;
+				SceneManager::LoadScene("Game");
+			}
+			else{
+				SceneManager::LoadScene("Ending");
+			}
+
+		};
+		clearLayer->Attach(button);
+
+		button = new Button("UI/UI_7.png");
+		button->value = Editor::GetValue("Scene/Game/C_EXIT");
+		button->onClick = [=]()
+		{
+			game_stage = 1;
+			SceneManager::LoadScene("Game");
+		};
+		clearLayer->Attach(button);
+
+		// ====================================
+		failLayer = new Node();
+		failLayer->enable = false;
+		failLayer->visible = false;
+		this->Attach(failLayer);
+		background = new Sprite("UI/UI_5.png");
+		background->value.position = { 640, 360 };
+		failLayer->Attach(background);
+
+		button = new Button("UI/UI_7.png");
+		button->value = Editor::GetValue("Scene/Game/F_RETRY");
+		button->onClick = [=]()
+		{
+			SceneManager::LoadScene("Game");
+		};
+		failLayer->Attach(button);
+
+		button = new Button("UI/UI_8.png");
+		button->value = Editor::GetValue("Scene/Game/F_EXIT");
+		button->onClick = [=]()
+		{
+			game_stage = 1;
+			SceneManager::LoadScene("MainMenu");
+		};
+		failLayer->Attach(button);
 	}
 
 	void PlayerInit(){
@@ -91,6 +184,9 @@ public:
 	}
 
 	void BackgroundUpdate(){
+		if (!backgroundLayer->enable)
+			return;
+
 		for (auto it : backgrounds){
 			if (it->tag.compare("bg0") == 0){
 				it->value.position.y += 100 * dt;
@@ -112,14 +208,19 @@ public:
 	}
 
 	void HudInit(){
+		Sprite* background = new Sprite("UI/UI_1.png");
+		background->value.position = { 640, 360 };
+		this->Attach(background);
+
 		playerHealthBar = new Node();
 		this->Attach(playerHealthBar);
 		playerHealthBar->value = Editor::GetValue("Scene/Game/playerHealthBar");
 		for (int i = 0; i < 5; i++){
-			hearts[i] = new Sprite("heart.png");
-			hearts[i]->value.position.y -= 40 * i;
+			hearts[i] = new Sprite("UI/UI_3.png");
+			hearts[i]->value.position.y -= 30 * i;
 			playerHealthBar->Attach(hearts[i]);
 		}
+		editor->AddEditor(playerHealthBar, "Scene/Game/playerHealthBar");
 	}
 
 	void HudUpdate(){
@@ -136,7 +237,13 @@ public:
 			if (!pause){
 				pause = true;
 				dt = 0.0f;
+				pauseLayer->visible = true;
+				pauseLayer->enable = true;
 			}
+		}
+
+		if (input->KeyDown(VK_SPACE)){
+			ShowBossMonster();
 		}
 
 		Cheat::Update();
@@ -162,5 +269,15 @@ public:
 				return it;
 			}
 		}
+	}
+
+	void ShowBossMonster(){
+		if (!boss1_clear)
+			hardMonster->Init(1);
+		else
+			hardMonster->Init(2);
+
+		hardMonster->Show();
+		backgroundLayer->enable = false;
 	}
 };

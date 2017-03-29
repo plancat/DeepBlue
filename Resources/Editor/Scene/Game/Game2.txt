@@ -1,0 +1,7 @@
+6
+Scenes/Game2/Stage_2_0.png 640 360 bg0
+Scenes/Game2/Stage_2_0.png 640 -360 bg0
+Scenes/Game2/Stage_2_1.png 640 360 bg1
+Scenes/Game2/Stage_2_1.png 640 -360 bg1
+Scenes/Game2/Stage_2_2.png 640 360 bg2
+Scenes/Game2/Stage_2_2.png 640 -360 bg2

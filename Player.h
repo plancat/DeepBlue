@@ -8,16 +8,16 @@ private:
 	float bulletTime;
 	int thirdBulletCnt;
 	int finalBulletCnt;
+	int followBulletCnt;
 public:
 	Vector2 speed;
 public:
 	Player() {
 		this->AddAnimation(new Animation("Unit/Player", 0.1f, true));
 		this->animation->Play();
-		speed = { 0, 0 };
 		this->tag = "Player";
-		// this->debug = true;
 		bulletTime = 0.0f;
+		speed = { 0, 0 };
 
 		for (int i = 0; i < 10; i++){
 			auto bullet = new Bullet(BulletType::PLAYER, Vector2(0, -1));
@@ -34,6 +34,10 @@ public:
 			};
 			bullets.push_back(bullet);
 		}
+
+		thirdBulletCnt = player_thirdBullet;
+		finalBulletCnt = player_finalBullet;
+		followBulletCnt = player_followBullet;
 	}
 
 	~Player(){
