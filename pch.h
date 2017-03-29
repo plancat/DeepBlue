@@ -39,24 +39,25 @@ public:
 	RankingData(){
 
 	}
-	RankingData(const char str[3], int score){
+	RankingData(const string str[3], int score){
 		this->score = score;
-		name.push_back(str[0]);
-		name.push_back(str[1]);
-		name.push_back(str[2]);
 	}
 private:
 	static vector<RankingData> rankingDatas;
 public:
-	static void Load(){
+	static vector<RankingData> Load(){
+		vector<RankingData> tempRanking;
 		auto is = ifstream("Resources/Ranking.txt");
 		for (int i = 0; i < 4; i++){
 			auto rankingData = RankingData();
 			is >> rankingData.name >> rankingData.score;
 			rankingDatas.push_back(rankingData);
 			cout << "Ranking : " << rankingData.name << " " << rankingData.score << endl;
+			tempRanking.push_back(rankingData);
 		}
 		is.close();
+
+		return tempRanking;
 	}
 	static void Add(RankingData data){
 		rankingDatas.push_back(data);

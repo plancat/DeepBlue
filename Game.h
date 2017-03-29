@@ -38,7 +38,10 @@ private:
 	Node* failLayer;
 
 	bool pause = false;
+	bool isBoss = false;
 	bool boss1_clear;
+
+	TextString* gameScoreText;
 public:
 	Game(){
 		editor = new Editor();
@@ -49,6 +52,7 @@ public:
 		this->Attach(backgroundLayer);
 
 		bossHealthBar = nullptr;
+		hardMonster = nullptr;
 
 		if (game_stage == 1)
 			backgrounds = Editor::GetBackgrounds("Scene/Game/Game1");
@@ -59,15 +63,11 @@ public:
 			backgroundLayer->Attach(it);
 		}
 
-		hardMonster = new HardMonster();
-		hardMonster->Hide();
-		hardMonster->Init(1);
-		hardMonster->value = Editor::GetValue("Unit/Hard");
-		this->Attach(hardMonster);
-
 		boss1_clear = false;
 		prevMonsterCreate = 0.0f;
 		nextMonsterCreate = 3;
+
+		PlayerInit();
 
 		for (int i = 0; i < 10; i++){
 			auto normal = new NormalMonster();
@@ -79,7 +79,11 @@ public:
 			monsters.push_back(normal);
 		}
 
-		PlayerInit();
+		hardMonster = new HardMonster();
+		hardMonster->value = Editor::GetValue("Unit/Hard");
+		hardMonster->Hide();
+		this->Attach(hardMonster);
+
 		HudInit();
 		LayerInit();
 	}
@@ -230,6 +234,12 @@ public:
 		bossHealthBackground->value.position = { 640, 360 };
 		bossHealthBackground->visible = false;
 		this->Attach(bossHealthBackground);
+
+		gameScoreText = new TextString();
+		gameScoreText->value = Editor::GetValue("Scene/Game/gameScore");
+		gameScoreText->SetString(to_string(game_score));
+		editor->AddEditor(gameScoreText, "Scene/Game/gameScore");
+		this->Attach(gameScoreText);
 	}
 
 	void HudUpdate(){
@@ -239,11 +249,52 @@ public:
 		for (int i = 0; i < player->health; i++)
 			hearts[i]->visible = true;
 
-		if (bossHealthBar != nullptr)
+		if (bossHealthBar != nullptr && hardMonster != nullptr)
 			bossHealthBar->SetValue(hardMonster->health);
 	}
 
 	void OnUpdate() override {
+		Cheat::Update();
+		HudUpdate();
+		BackgroundUpdate();
+
+		if (player->health <= 0){
+			failLayer->visible = true;
+			failLayer->enable = true;
+			dt = 0.0f;
+		}
+
+		if (hardMonster != nullptr)
+		{
+			if (hardMonster->health <= 0)
+			{
+				if (isBoss){
+					isBoss = false;
+					if (!boss1_clear)
+					{
+						boss1_clear = true;
+						bossHealthBackground->visible = false;
+						backgroundLayer->enable = true;
+					}
+					else{
+						clearLayer->visible = true;
+						clearLayer->enable = true;
+						dt = 0.0f;
+					}
+				}
+			}
+		}
+
+
+		prevMonsterCreate += dt;
+		if (prevMonsterCreate >= nextMonsterCreate){
+			prevMonsterCreate = 0.0f;
+
+			auto monster = getMonster();
+			static_cast<NormalMonster*>(monster)->Init();
+			monster->value.position = { (float)(rand() % 1180 + 100), (float)-3 };
+		}
+
 		if (input->KeyDown(VK_ESCAPE)){
 			if (!pause){
 				pause = true;
@@ -265,30 +316,8 @@ public:
 			hardMonster->Damage(50);
 		}
 
-		if (player->health <= 0){
-			failLayer->visible = true;
-			failLayer->enable = true;
-			dt = 0.0f;
-		}
-
-		if (hardMonster->health <= 0){
-			clearLayer->visible = true;
-			clearLayer->enable = true;
-			dt = 0.0f;
-		}
-
-		Cheat::Update();
-		HudUpdate();
-		BackgroundUpdate();
-
-		prevMonsterCreate += dt;
-		if (prevMonsterCreate >= nextMonsterCreate){
-			prevMonsterCreate = 0.0f;
-
-			auto monster = getMonster();
-			static_cast<NormalMonster*>(monster)->Init();
-			monster->value.position = { (float)(rand() % 1180 + 100), (float)-3 };
-		}
+		if (gameScoreText!= nullptr)
+			gameScoreText->SetString(to_string(game_score));
 	}
 
 	UnitBase* getMonster(){
@@ -307,11 +336,10 @@ public:
 		else
 			hardMonster->Init(2);
 
-		if (bossHealthBar != nullptr)
-			bossHealthBar->Destroy();
-
+		isBoss = true;
 		hardMonster->Show();
-
+		hardMonster->visible = true;
+		hardMonster->enable = true;
 		backgroundLayer->enable = false;
 		bossHealthBackground->visible = true;
 		bossHealthBar = new FillSprite("hp.png", 550, hardMonster->health);

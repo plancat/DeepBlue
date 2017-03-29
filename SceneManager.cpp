@@ -4,6 +4,7 @@
 #include "Intro.h"
 #include "Initial.h"
 #include "Ending.h"
+#include "Credit.h"
 
 Node* SceneManager::curScene = nullptr;
 Node* SceneManager::nextScene = nullptr;
@@ -32,5 +33,8 @@ void SceneManager::LoadScene(const string& name)
 	else if (name.compare("Game") == 0)
 	{
 		nextScene = new Game();
+	}
+	else if (name.compare("Credit") == 0){
+		nextScene = new Credit();
 	}
 }

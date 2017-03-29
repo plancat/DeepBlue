@@ -187,6 +187,9 @@
     <ClInclude Include="HardMonster.h">
       <Filter>Game\Unit\Monster</Filter>
     </ClInclude>
+    <ClInclude Include="Credit.h">
+      <Filter>Game\Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">

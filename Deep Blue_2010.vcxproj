@@ -395,6 +395,7 @@
     <ClCompile Include="UnitBase.cpp" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Cheat.h" />
+    <ClInclude Include="Credit.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="Ending.h" />
     <ClInclude Include="Game.h" />

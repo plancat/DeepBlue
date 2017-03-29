@@ -47,9 +47,29 @@ public:
 		rankingLayer = new Dialog();
 		this->Attach(rankingLayer);
 
-		Sprite* background = new Sprite("Scenes/Tutorial/tu1.png");
-		background->value.position = Vector2(1280 / 2, 720 / 2);
-		rankingLayer->Attach(background);
+		//Sprite* background = new Sprite("Scenes/Tutorial/tu1.png");
+		//background->value.position = Vector2(1280 / 2, 720 / 2);
+		//rankingLayer->Attach(background);
+
+		Node* rankingListLayer = new Node();
+		rankingListLayer->value = Editor::GetValue("Scene/MainMenu/rankingList");
+		rankingLayer->Attach(rankingListLayer);
+		// editor->AddEditor(rankingLayer, "Scene/MainMenu/rankingList");
+
+		auto rankings = RankingData::Load();
+		for (int i = 0; i < rankings.size();i++){
+			TextString* name = new TextString();
+			name->SetString(rankings[i].name);
+			name->value.scale = { 0.45, 0.45 };
+			name->value.position.y += i * 250;
+			rankingListLayer->Attach(name);
+			TextString* score = new TextString();
+			score->SetString(to_string(rankings[i].score));
+			score->value.scale = { 0.45, 0.45 };
+			score->value.position.x = 600;
+			score->value.position.y += i * 250;
+			rankingListLayer->Attach(score);
+		}
 	}
 
 	void TutorialInit(){

@@ -59,6 +59,7 @@ public:
 		UpdateKey(VK_ESCAPE);
 		UpdateKey(VK_LCONTROL);
 		UpdateKey(VK_BACK);
+		UpdateKey(VK_RETURN);
 		for (int i = 'A'; i <= 'Z'; i++){
 			UpdateKey(i);
 		}

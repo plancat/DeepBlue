@@ -86,3 +86,53 @@ public:
 		}
 	}
 };
+
+class Text : public Node
+{
+private:
+	char str;
+	Sprite* text_sprite = nullptr;
+public:
+	Text(){
+		text_sprite = new Sprite();
+		this->Attach(text_sprite);
+	}
+	void SetString(const string& text){
+		if (text.compare("") != 0)
+		{
+			if (text_sprite != nullptr)
+				text_sprite->texture = Texture::Load("Font/" + text + ".png");
+		}
+	}
+
+	void SetString(const char& text){
+		if (text_sprite != nullptr)
+		{
+			string temp = "";
+			temp.push_back(text);
+			text_sprite->texture = Texture::Load("Font/" + temp + ".png");
+		}
+	}
+};
+
+class TextString : public Node
+{
+public:
+	string str;
+	vector<Text*> texts;
+
+	void SetString(const string& text){
+		if (texts.size() > 0)
+			for (auto it : texts)
+				it->Destroy();
+
+		texts.clear();
+		for (int i = 0; i < text.size(); i++){
+			Text* tmp = new Text();
+			tmp->SetString(text[i]);
+			tmp->value.position.x = 200 * i;
+			this->Attach(tmp);
+			texts.push_back(tmp);
+		}
+	}
+};

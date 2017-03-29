@@ -43,7 +43,8 @@ public:
 	{
 		MonsterBase::OnUpdate();
 
-		if (!show){
+		if (!show)
+		{
 			D3DXVec2Lerp(&value.position, &value.position, &Vector2(640, -360), 0.1f);
 		}
 		else

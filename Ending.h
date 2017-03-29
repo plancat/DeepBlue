@@ -13,6 +13,9 @@ public:
 public:
 	Ending()
 	{
+		input = new Input();
+		this->Attach(input);
+
 		for (int i = 0; i < 3; i++){
 			background[i] = new Sprite("Scenes/Ending/" + to_string(i + 1) + ".png");
 			background[i]->value.position = { 640, 360 };
