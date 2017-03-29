@@ -44,6 +44,11 @@ public:
 			};
 			bullets.push_back(bullet);
 		}
+
+		delayComment.push([=](){
+			for (auto it : bullets)
+				this->parent->Attach(it);
+		});
 	}
 
 	void Attack(){
@@ -70,9 +75,9 @@ public:
 
 				auto bullet = getBullet();
 				if (bullet != nullptr){
-					bullet->texture = Texture::Load("Torpedo/Torpedo_1.png");
-					bullet->value.angle = D3DXToRadian(180);
+					bullet->texture = Texture::Load("Bullet/0_0.png");
 					bullet->dir = { 0, 1 };
+					bullet->value.rectScale = { 0.3, 0.3 };
 					bullet->speed = 0.0f;
 					bullet->value.position = this->value.position + Vector2(0, 5);
 				}

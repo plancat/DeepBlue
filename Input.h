@@ -31,8 +31,8 @@ public:
 		}
 		else
 		{
-			if (keyStay[key]){
-				keyUp[key] = false;
+			if (!keyUp[key]){
+				keyUp[key] = true;
 				keyStay[key] = false;
 				keyDown[key] = false;
 			}
@@ -58,6 +58,7 @@ public:
 		UpdateKey(VK_SPACE);
 		UpdateKey(VK_ESCAPE);
 		UpdateKey(VK_LCONTROL);
+		UpdateKey(VK_BACK);
 		for (int i = 'A'; i <= 'Z'; i++){
 			UpdateKey(i);
 		}

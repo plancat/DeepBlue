@@ -11,6 +11,8 @@ Node* SceneManager::nextScene = nullptr;
 void SceneManager::LoadScene(const string& name)
 {
 	Sprite::Clear();
+	UnitBase::units.clear();
+
 	if (name.compare("MainMenu") == 0)
 	{
 		nextScene = new MainMenu();

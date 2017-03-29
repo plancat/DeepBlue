@@ -20,6 +20,9 @@ private:
 	Sprite* hearts[5];
 	Node* backgroundLayer;
 
+	Sprite* bossHealthBackground;
+	FillSprite* bossHealthBar;
+
 	Editor* editor;
 	float prevMonsterCreate;
 	float nextMonsterCreate;
@@ -45,6 +48,8 @@ public:
 		backgroundLayer = new Node();
 		this->Attach(backgroundLayer);
 
+		bossHealthBar = nullptr;
+
 		if (game_stage == 1)
 			backgrounds = Editor::GetBackgrounds("Scene/Game/Game1");
 		else if (game_stage == 2)
@@ -60,8 +65,7 @@ public:
 		hardMonster->value = Editor::GetValue("Unit/Hard");
 		this->Attach(hardMonster);
 
-		boss1_clear = true;
-
+		boss1_clear = false;
 		prevMonsterCreate = 0.0f;
 		nextMonsterCreate = 3;
 
@@ -77,7 +81,6 @@ public:
 
 		PlayerInit();
 		HudInit();
-
 		LayerInit();
 	}
 
@@ -94,6 +97,7 @@ public:
 		button->value = Editor::GetValue("Scene/Game/P_RESUME");
 		button->onClick = [=]()
 		{
+			dt = 0.016;
 			pauseLayer->visible = false;
 			pauseLayer->enable = false;
 			pause = false;
@@ -104,6 +108,7 @@ public:
 		button->value = Editor::GetValue("Scene/Game/P_RETRY");
 		button->onClick = [=]()
 		{
+			dt = 0.016;
 			SceneManager::LoadScene("Game");
 		};
 		pauseLayer->Attach(button);
@@ -112,6 +117,7 @@ public:
 		button->value = Editor::GetValue("Scene/Game/P_EXIT");
 		button->onClick = [=]()
 		{
+			dt = 0.016;
 			SceneManager::LoadScene("MainMenu");
 		};
 		pauseLayer->Attach(button);
@@ -129,6 +135,7 @@ public:
 		button->value = Editor::GetValue("Scene/Game/C_NEXT");
 		button->onClick = [=]()
 		{
+			dt = 0.016;
 			if (game_stage == 1){
 				game_stage = 2;
 				SceneManager::LoadScene("Game");
@@ -144,7 +151,7 @@ public:
 		button->value = Editor::GetValue("Scene/Game/C_EXIT");
 		button->onClick = [=]()
 		{
-			game_stage = 1;
+			dt = 0.016;
 			SceneManager::LoadScene("Game");
 		};
 		clearLayer->Attach(button);
@@ -162,6 +169,7 @@ public:
 		button->value = Editor::GetValue("Scene/Game/F_RETRY");
 		button->onClick = [=]()
 		{
+			dt = 0.016;
 			SceneManager::LoadScene("Game");
 		};
 		failLayer->Attach(button);
@@ -170,6 +178,7 @@ public:
 		button->value = Editor::GetValue("Scene/Game/F_EXIT");
 		button->onClick = [=]()
 		{
+			dt = 0.016;
 			game_stage = 1;
 			SceneManager::LoadScene("MainMenu");
 		};
@@ -186,12 +195,8 @@ public:
 	void BackgroundUpdate(){
 		if (!backgroundLayer->enable)
 			return;
-
 		for (auto it : backgrounds){
-			if (it->tag.compare("bg0") == 0){
-				it->value.position.y += 100 * dt;
-			}
-			else if (it->tag.compare("bg1") == 0){
+			if (it->tag.compare("bg1") == 0){
 				it->value.position.y += 200 * dt;
 			}
 			else if (it->tag.compare("bg2") == 0){
@@ -220,16 +225,22 @@ public:
 			hearts[i]->value.position.y -= 30 * i;
 			playerHealthBar->Attach(hearts[i]);
 		}
-		editor->AddEditor(playerHealthBar, "Scene/Game/playerHealthBar");
+
+		bossHealthBackground = new Sprite("UI/UI_13.png");
+		bossHealthBackground->value.position = { 640, 360 };
+		bossHealthBackground->visible = false;
+		this->Attach(bossHealthBackground);
 	}
 
 	void HudUpdate(){
-		for (int i = 0; i < 5; i++){
+		for (int i = 0; i < 5; i++)
 			hearts[i]->visible = false;
-		}
-		for (int i = 0; i < player->health; i++){
+
+		for (int i = 0; i < player->health; i++)
 			hearts[i]->visible = true;
-		}
+
+		if (bossHealthBar != nullptr)
+			bossHealthBar->SetValue(hardMonster->health);
 	}
 
 	void OnUpdate() override {
@@ -246,8 +257,27 @@ public:
 			ShowBossMonster();
 		}
 
-		Cheat::Update();
+		if (input->KeyDown(VK_BACK)){
+			player->Damage(5);
+		}
 
+		if (input->KeyDown('N')){
+			hardMonster->Damage(50);
+		}
+
+		if (player->health <= 0){
+			failLayer->visible = true;
+			failLayer->enable = true;
+			dt = 0.0f;
+		}
+
+		if (hardMonster->health <= 0){
+			clearLayer->visible = true;
+			clearLayer->enable = true;
+			dt = 0.0f;
+		}
+
+		Cheat::Update();
 		HudUpdate();
 		BackgroundUpdate();
 
@@ -277,7 +307,15 @@ public:
 		else
 			hardMonster->Init(2);
 
+		if (bossHealthBar != nullptr)
+			bossHealthBar->Destroy();
+
 		hardMonster->Show();
+
 		backgroundLayer->enable = false;
+		bossHealthBackground->visible = true;
+		bossHealthBar = new FillSprite("hp.png", 550, hardMonster->health);
+		bossHealthBar->value = Editor::GetValue("Scene/Game/bossHealthBar");
+		bossHealthBackground->Attach(bossHealthBar);
 	}
 };

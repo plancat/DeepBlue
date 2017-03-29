@@ -29,7 +29,6 @@ public:
 			{
 				bullet->visible = false;
 				bullet->enable = false;
-
 				target->Damage(1);
 			};
 			bullets.push_back(bullet);
@@ -38,10 +37,12 @@ public:
 		thirdBulletCnt = player_thirdBullet;
 		finalBulletCnt = player_finalBullet;
 		followBulletCnt = player_followBullet;
-	}
 
-	~Player(){
-
+		delayComment.push([=](){
+			for (auto it : bullets){
+				this->parent->Attach(it);
+			}
+		});
 	}
 
 	void OnUpdate() override {
@@ -55,12 +56,24 @@ public:
 		{
 			if (input->KeyStay(VK_DOWN))
 				speed.y += 1;
-			if (input->KeyStay(VK_UP))
+			else if (input->KeyStay(VK_UP))
 				speed.y -= 1;
-			if (input->KeyStay(VK_LEFT))
+
+			if (input->KeyStay(VK_LEFT)){
 				speed.x -= 1;
-			if (input->KeyStay(VK_RIGHT))
+				texture = Texture::Load("Unit/Player_Left.png");
+				animation->Stop();
+			}
+			else if (input->KeyStay(VK_RIGHT)){
 				speed.x += 1;
+				texture = Texture::Load("Unit/Player_Right.png");
+				animation->Stop();
+			}
+
+			if (input->KeyUp(VK_LEFT) || input->KeyUp(VK_RIGHT))
+			{
+				animation->Play();
+			}
 
 			speed *= 0.9f;
 

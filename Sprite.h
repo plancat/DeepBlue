@@ -61,9 +61,11 @@ public:
 	float currenDelaytTime;
 	float delayTime;
 	vector<string> animations;
+	bool visible = false;
 public:
-	Animation(const string& path = "", float delayTime = 0.1f, bool loop = false) : delayTime(delayTime), loop(loop){
+	Animation(const string& path = "", float delayTime = 0.1f, bool loop = false, bool visible = true) : delayTime(delayTime), loop(loop), visible(visible) {
 		curIdx = 0;
+		animationEnable = false;
 		animations = Path::GetFiles(path);
 		for (auto it : animations){
 			Texture::Load(it);
@@ -71,9 +73,11 @@ public:
 	}
 
 	void Play(){
-		curIdx = 0;
-		currenDelaytTime = 0;
-		animationEnable = true;
+		if (!animationEnable){
+			curIdx = 0;
+			currenDelaytTime = 0;
+			animationEnable = true;
+		}
 	}
 
 	void Stop(){
@@ -218,5 +222,8 @@ public:
 		return false;
 	}
 
-	virtual void OnCollision(Sprite*){}
+	virtual void OnCollision(Sprite* bullet)
+	{
+		
+	}
 };

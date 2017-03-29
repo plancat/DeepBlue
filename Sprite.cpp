@@ -6,6 +6,7 @@ map<string, Texture*> Texture::textures;
 
 void Animation::Update(Sprite* sprite){
 	if (animationEnable){
+		sprite->visible = true;
 		currenDelaytTime += dt;
 		if (delayTime <= currenDelaytTime){
 			if (curIdx < animations.size()){
@@ -15,6 +16,7 @@ void Animation::Update(Sprite* sprite){
 			}
 			else
 			{
+				sprite->visible = visible;
 				if (loop)
 					curIdx = 0;
 			}

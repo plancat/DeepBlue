@@ -14,6 +14,19 @@ public:
 	void Init(int monster){
 		if (game_stage == 1){
 			if (monster == 1){
+				this->AddAnimation(new Animation("Unit/Shark/Young/Idle", 0.1f, true));
+				this->animation->Play();
+				this->health = 100;
+			}
+			else if (monster == 2){
+				this->AddAnimation(new Animation("Unit/Shark/Adult/Idle", 0.1f, true));
+				this->animation->Play();
+				this->health = 100;
+			}
+		}
+		else
+		{
+			if (monster == 1){
 				this->AddAnimation(new Animation("Unit/Axolotl/Young/Idle", 0.1f, true));
 				this->animation->Play();
 				this->health = 100;
@@ -21,15 +34,7 @@ public:
 			else if (monster == 2){
 				this->AddAnimation(new Animation("Unit/Axolotl/Adult/Idle", 0.1f, true));
 				this->animation->Play();
-			}
-		}
-		else
-		{
-			if (monster == 1){
-
-			}
-			else if (monster == 2){
-
+				this->health = 100;
 			}
 		}
 	}

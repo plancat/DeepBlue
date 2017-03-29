@@ -20,6 +20,9 @@ void Bullet::OnUpdate(){
 		{
 			if (it->tag.compare("Player") == 0 && bulletType == BulletType::MONSTER ||
 				it->tag.compare("Player") != 0 && bulletType == BulletType::PLAYER){
+				effect->AddAnimation(new Animation("Effect", 0.1, false, false));
+				effect->animation->Play();
+				effect->value.position = this->value.position;
 				it->OnCollision(this);
 				this->collision(this, it);
 			}

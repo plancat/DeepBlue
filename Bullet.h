@@ -5,11 +5,12 @@
 enum class BulletType{
 	PLAYER, MONSTER
 };
-
+ 
 class UnitBase;
 class Bullet : public Sprite
 {
 public:
+	Sprite* effect;
 	Node* target = nullptr;
 public:
 	Vector2 dir;
@@ -21,6 +22,10 @@ public:
 		collision = [=](Sprite* temp, UnitBase* target){};
 		this->texture = Texture::Load("bullet.png");
 		sprites.push_back(this);
+		effect = new Sprite();
+		//delayComment.push([=](){
+		//	this->parent->Attach(effect);
+		//});
 	}
 
 	void Init(){

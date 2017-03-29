@@ -5,22 +5,26 @@
 
 class FillSprite : public Node
 {
-private:
+public:
+	int maxValue;
+	int maxScale;
 	Sprite* fillSprite;
 public:
-	FillSprite(const string& path) {
+	FillSprite(const string& path, int maxScale, int maxValue) : maxScale(maxScale), maxValue(maxValue) {
 		fillSprite = new Sprite(path);
-		fillSprite->value.scale.x = 200;
+		fillSprite->value.scale.x = maxScale;
+		fillSprite->value.anchor = { 0, 0.5 };
+		fillSprite->value.position.x -= (maxScale / 2);
 		this->Attach(fillSprite);
 	}
 
 	void SetValue(int value){
-		if (value > 100)
-			value = 100;
+		if (value >= maxValue)
+			value = maxValue;
 		else if (value < 0)
 			value = 0;
 
-		fillSprite->value.scale.x = value * 2;
+		fillSprite->value.scale.x = (float)maxScale * ((float)value / (float)maxValue);
 	}
 };
 

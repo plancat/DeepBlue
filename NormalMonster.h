@@ -9,7 +9,7 @@ public:
 	FillSprite* healthBar;
 public:
 	NormalMonster() : MonsterBase(3, 0.1f, 2.5f, 5){
-		healthBar = new FillSprite("hp.png");
+		healthBar = new FillSprite("hp.png", 50, health);
 		healthBar->value.position = Vector2(0, -45);
 		this->Attach(healthBar);
 	}
@@ -35,13 +35,21 @@ public:
 		else if (game_stage == 2)
 		{
 			if (random == 0){
-
+				this->AddAnimation(new Animation("Unit/Blobfish/Idle", 0.1, true));
+				this->animation->Play();
+				this->tag = "Football";
+				health = 4;
 			}
 			else {
-
+				this->AddAnimation(new Animation("Unit/Football/Idle", 0.1, true));
+				this->animation->Play();
+				this->tag = "Dori";
+				health = 4;
 			}
 		}
-		healthBar->SetValue(health * 2);
+
+		healthBar->maxValue = health;
+		healthBar->SetValue(health);
 	}
 
 	void OnUpdate() override {
@@ -55,7 +63,7 @@ public:
 
 	void Damage(int power) override {
 		MonsterBase::Damage(power);
-		healthBar->SetValue(health * 50);
+		healthBar->SetValue(health);
 	}
 
 	void Death() override {
