@@ -14,32 +14,38 @@ private:
 	static map<string, Texture*> textures;
 public:
 	static Texture* Load(const string& name){
-		auto texture = new Texture();
-		string filename = "Resources/" + name;
-		D3DXIMAGE_INFO info;
-		D3DXCreateTextureFromFileExA(
-			DXUTGetD3D9Device(),
-			filename.c_str(),
-			D3DX_DEFAULT_NONPOW2,
-			D3DX_DEFAULT_NONPOW2,
-			1, 0,
-			D3DFMT_UNKNOWN,
-			D3DPOOL_DEFAULT,
-			D3DX_DEFAULT,
-			D3DX_DEFAULT,
-			0,
-			&info,
-			0,
-			&texture->texture);
 
-		texture->name = name;
-		texture->width = info.Width;
-		texture->height = info.Height;
+		if (textures.find(name) != textures.end())
+			return textures[name];
+		else
+		{
+			auto texture = new Texture();
+			string filename = "Resources/" + name;
+			D3DXIMAGE_INFO info;
+			D3DXCreateTextureFromFileExA(
+				DXUTGetD3D9Device(),
+				filename.c_str(),
+				D3DX_DEFAULT_NONPOW2,
+				D3DX_DEFAULT_NONPOW2,
+				1, 0,
+				D3DFMT_UNKNOWN,
+				D3DPOOL_DEFAULT,
+				D3DX_DEFAULT,
+				D3DX_DEFAULT,
+				0,
+				&info,
+				0,
+				&texture->texture);
 
-		// cout << "Texture Load : " << name << endl;
+			texture->name = name;
+			texture->width = info.Width;
+			texture->height = info.Height;
 
-		textures.insert({ name, texture });
-		return texture;
+			cout << "Texture Load : " << name << endl;
+
+			textures.insert({ name, texture });
+			return texture;
+		}
 	}
 };
 
@@ -59,6 +65,9 @@ public:
 	Animation(const string& path = "", float delayTime = 0.1f, bool loop = false) : delayTime(delayTime), loop(loop){
 		curIdx = 0;
 		animations = Path::GetFiles(path);
+		for (auto it : animations){
+			Texture::Load(it);
+		}
 	}
 
 	void Play(){
@@ -128,6 +137,8 @@ public:
 	}
 
 	void AddAnimation(Animation* animation){
+		if (this->animation != nullptr)
+			delete this->animation;
 		this->animation = animation;
 	}
 

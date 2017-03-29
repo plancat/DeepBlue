@@ -37,7 +37,10 @@ public:
 			bullet->value.rectScale = { 0.2f, 0.2f };
 			bullet->collision = [=](Sprite* bullet, UnitBase* target)
 			{
+				bullet->visible = false;
+				bullet->enable = false;
 
+				target->Damage(1);
 			};
 			bullets.push_back(bullet);
 		}
@@ -63,7 +66,7 @@ public:
 				prevAttackCnt += 1;
 				prevAttackDelay = 0.0f;
 
-				cout << "Attack" << endl;
+				// cout << "Attack" << endl;
 
 				auto bullet = getBullet();
 				if (bullet != nullptr){

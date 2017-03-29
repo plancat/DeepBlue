@@ -10,6 +10,8 @@ class UnitBase;
 class Bullet : public Sprite
 {
 public:
+	Node* target = nullptr;
+public:
 	Vector2 dir;
 	float speed;
 	BulletType bulletType;
@@ -21,5 +23,12 @@ public:
 		sprites.push_back(this);
 	}
 
+	void Init(){
+		target = nullptr;
+		dir = { 0, -1 };
+		value.angle = 0.0f;
+	}
+
+	void FindTarget();
 	void OnUpdate() override;
 };

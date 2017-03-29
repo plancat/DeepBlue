@@ -2,6 +2,9 @@
 #include "pch.h"
 #include "Node.h"
 
+#define KEY_DOWN(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 1 : 0)
+#define KEY_UP(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 0 : 1)
+
 class Input : public Node
 {
 public:
@@ -10,28 +13,28 @@ public:
 	map<int, bool> keyUp;
 public:
 	void UpdateKey(int key) {
-		int state = GetAsyncKeyState(key);
-		if (state & 0x8001)
+		bool state = GetAsyncKeyState(key) & 0x8001;
+		if (state)
 		{
-			if (state & 0x8001)
+			if (!keyDown[key] && !keyStay[key])
+			{
 				keyDown[key] = true;
-			else
-				keyDown[key] = false;
-		
-			keyStay[key] = true;
-		}
-		else
-		{
-			if (keyStay[key]){
-				keyDown[key] = false;
-				keyStay[key] = false;
-				keyUp[key] = true;
+				keyStay[key] = true;
+				keyUp[key] = false;
 			}
 			else
 			{
 				keyDown[key] = false;
-				keyStay[key] = false;
+				keyStay[key] = true;
 				keyUp[key] = false;
+			}
+		}
+		else
+		{
+			if (keyStay[key]){
+				keyUp[key] = false;
+				keyStay[key] = false;
+				keyDown[key] = false;
 			}
 		}
 	}
@@ -54,6 +57,7 @@ public:
 		UpdateKey(VK_DOWN);
 		UpdateKey(VK_SPACE);
 		UpdateKey(VK_ESCAPE);
+		UpdateKey(VK_LCONTROL);
 		for (int i = 'A'; i <= 'Z'; i++){
 			UpdateKey(i);
 		}

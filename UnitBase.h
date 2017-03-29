@@ -8,9 +8,11 @@ class UnitBase : public Sprite
 public:
 	vector<Bullet*> bullets;
 	static vector<UnitBase*> units;
+	bool lockOn;
 public:
 	UnitBase(){
 		units.push_back(this);
+		lockOn = false;
 	}
 
 	int health;
@@ -26,9 +28,9 @@ public:
 		}
 	}
 
-	void Damage(int power){
+	virtual void Damage(int power){
 		health -= power;
-		if (health < 0){
+		if (health <= 0){
 			Death();
 		}
 	}
@@ -36,5 +38,6 @@ public:
 	virtual void Death(){
 		this->visible = false;
 		this->enable = false;
+		lockOn = false;
 	}
 };

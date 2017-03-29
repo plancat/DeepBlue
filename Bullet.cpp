@@ -1,9 +1,20 @@
 #include "Bullet.h"
 #include "UnitBase.h"
 
+void Bullet::FindTarget(){
+	for (auto it : UnitBase::units){
+		if (it->tag.compare("Player") != 0 && !it->lockOn){
+			it->lockOn = true;
+			target = it;
+			return;
+		}
+	}
+}
+
 void Bullet::OnUpdate(){
 	speed += dt * 700;
 	value.position += dir * speed * dt;
+
 	for (auto it : UnitBase::units){
 		if (it->IntersectRect(this))
 		{
@@ -26,5 +37,14 @@ void Bullet::OnUpdate(){
 			this->visible = false;
 			this->enable = false;
 		}
+	}
+
+	if (target != nullptr){
+		if (!target->visible && !target->enable){
+			target = nullptr;
+			return;
+		}
+		D3DXVec2Normalize(&dir, &(target->value.position - this->value.position));
+		value.angle = atan2(dir.y, dir.x) + D3DXToRadian(90);
 	}
 }

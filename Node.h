@@ -13,7 +13,7 @@ public:
 class NodeValue
 {
 public:
-	Vector2 position = {0,0};
+	Vector2 position = { 0, 0 };
 	Vector2 scale = { 1, 1 };
 	Vector2 anchor = { 0.5, 0.5 };
 	float angle = 0;
@@ -46,10 +46,10 @@ public:
 		for (auto it : children)
 			delete it;
 	}
-	
+
 	virtual void OnUpdate(){}
 	virtual void OnDraw(){};
-	
+
 	void Update(){
 		if (enable){
 			OnUpdate();
@@ -67,8 +67,9 @@ public:
 	}
 
 	static void RootUpdate(){
-		for (auto it : roots)
+		for (auto it : roots){
 			it->Update();
+		}
 
 		while (delayComment.empty() == false){
 			delayComment.front()();
@@ -86,7 +87,7 @@ public:
 			children.push_back(node);
 			auto iter = remove(roots.begin(), roots.end(), node);
 			if (iter != roots.end())
-				roots.erase(iter);	
+				roots.erase(iter);
 		});
 		node->parent = this;
 	}

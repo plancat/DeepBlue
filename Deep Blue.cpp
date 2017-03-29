@@ -78,6 +78,7 @@ void CALLBACK OnD3D9FrameRender( IDirect3DDevice9* pd3dDevice, double fTime, flo
     if( SUCCEEDED( pd3dDevice->BeginScene() ) )
     {
 		SceneManager::SceneUpdate();
+		// cout << DXUTGetFPS() << endl;
         V( pd3dDevice->EndScene() );
     }
 }

@@ -7,9 +7,7 @@ class Player : public UnitBase
 private:
 	float bulletTime;
 	int thirdBulletCnt;
-	bool thirdBullet = false;
 	int finalBulletCnt;
-	bool finalBullet = false;
 public:
 	Vector2 speed;
 public:
@@ -18,7 +16,7 @@ public:
 		this->animation->Play();
 		speed = { 0, 0 };
 		this->tag = "Player";
-		this->debug = true;
+		// this->debug = true;
 		bulletTime = 0.0f;
 
 		for (int i = 0; i < 10; i++){
@@ -49,7 +47,8 @@ public:
 
 	void KeyInput()
 	{
-		if (dt >= 0){
+		if (dt > 0)
+		{
 			if (input->KeyStay(VK_DOWN))
 				speed.y += 1;
 			if (input->KeyStay(VK_UP))
@@ -63,6 +62,15 @@ public:
 
 			value.position += speed;
 
+			if (value.position.x < 0)
+				value.position.x = 0;
+			if (value.position.x > 1280)
+				value.position.x = 1280;
+			if (value.position.y < 0)
+				value.position.y = 0;
+			if (value.position.y > 720)
+				value.position.y = 720;
+
 			// ±âº» ¾î·Ú
 			if (input->KeyStay('Z')){
 				bulletTime += dt;
@@ -71,6 +79,7 @@ public:
 					auto bullet = getBullet();
 					if (bullet != nullptr){
 						bullet->texture = Texture::Load("Torpedo/Torpedo_0.png");
+						bullet->Init();
 						bullet->value.angle = 0.0f;
 						bullet->dir = { 0, -1 };
 						bullet->speed = -200;
@@ -81,48 +90,53 @@ public:
 
 			// 3¹æÇâ ¾î·Ú
 			if (input->KeyDown('X')){
-				if (!thirdBullet){
-					thirdBullet = true;
-					for (int i = 0; i < 3; i++){
-						auto bullet = getBullet();
-						if (bullet != nullptr){
-							bullet->texture = Texture::Load("Torpedo/Torpedo_1.png");
-							bullet->value.angle = 0.0f;
-							bullet->dir = { 0, -1 };
-							bullet->speed = (rand() % 280 + 250)* -1;
-							if (i == 0){
-								bullet->value.position = this->value.position + Vector2(0, -5);
-							}
-							else if (i == 1){
-								bullet->value.position = this->value.position + Vector2(-15, 15);
-							}
-							else if (i == 2)
-							{
-								bullet->value.position = this->value.position + Vector2(15, 15);
-							}
+
+				for (int i = 0; i < 3; i++){
+					auto bullet = getBullet();
+					if (bullet != nullptr){
+						bullet->texture = Texture::Load("Torpedo/Torpedo_1.png");
+						bullet->Init();
+						bullet->value.angle = 0.0f;
+						bullet->dir = { 0, -1 };
+						bullet->speed = (rand() % 280 + 250)* -1;
+						if (i == 0){
+							bullet->value.position = this->value.position + Vector2(0, -5);
+						}
+						else if (i == 1){
+							bullet->value.position = this->value.position + Vector2(-15, 15);
+						}
+						else if (i == 2)
+						{
+							bullet->value.position = this->value.position + Vector2(15, 15);
 						}
 					}
 				}
 			}
-			else
-				thirdBullet = false;
 
 			// ÇÙÅºµÎ
 			if (input->KeyDown('C')){
-				if (!finalBullet){
-					finalBullet = true;
-					auto bullet = getBullet();
-					if (bullet != nullptr){
-						bullet->texture = Texture::Load("Torpedo/Torpedo_3.png");
-						bullet->dir = { 0, -1 };
-						bullet->value.angle = 0.0f;
-						bullet->speed = -200;
-						bullet->value.position = this->value.position + Vector2(0, -5);
-					}
+				auto bullet = getBullet();
+				if (bullet != nullptr){
+					bullet->texture = Texture::Load("Torpedo/Torpedo_3.png");
+					bullet->Init();
+					bullet->dir = { 0, -1 };
+					bullet->value.angle = 0.0f;
+					bullet->speed = -200;
+					bullet->value.position = this->value.position + Vector2(0, -5);
 				}
 			}
-			else
-				finalBullet = false;
+
+
+			if (input->KeyDown(VK_LCONTROL)){
+				auto bullet = getBullet();
+				if (bullet != nullptr){
+					bullet->texture = Texture::Load("Torpedo/Torpedo_3.png");
+					bullet->FindTarget();
+					bullet->Init();
+					bullet->value.position = this->value.position + Vector2(0, -5);
+					bullet->speed = 100;
+				}
+			}
 		}
 	}
 };

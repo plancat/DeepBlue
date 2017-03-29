@@ -29,6 +29,24 @@ public:
 		return nodeValue;
 	}
 
+	static vector<Sprite*> GetBackgrounds(const string& path){
+		vector<Sprite*> backgrounds;
+		auto file = ifstream("Resources/Editor/" + path + ".txt");
+		int count = 0;
+		file >> count;
+
+		for (int i = 0; i < count; i++){
+			Sprite* background = new Sprite();
+			string sprite_name;
+			Vector2 sprite_pos;
+			file >> sprite_name >> sprite_pos.x >> sprite_pos.y >> background->tag;
+			background->texture = Texture::Load(sprite_name);
+			background->value.position = sprite_pos;
+			backgrounds.push_back(background);
+		}
+		return backgrounds;
+	}
+
 	void AddEditor(Node* node, const string& path){
 		editors.push_back({ node, path });
 	}

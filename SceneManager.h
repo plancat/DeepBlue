@@ -22,6 +22,6 @@ public:
 		Node::RootUpdate();
 		Node::RootDraw();
 		Sprite::DrawEnd();
-		Sprite::LineDraw();
+		// Sprite::LineDraw();
 	}
 };
