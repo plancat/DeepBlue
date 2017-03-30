@@ -43,6 +43,12 @@ private:
 
 	TextString* gameScoreText;
 	TextString* gameStageText;
+
+	Sprite* game_stage_show;
+
+		vector<Sprite*> bubbles;
+	float prevBubbleDelay = 0.0f;
+	float nextBubbleDelay = 0.0f;
 public:
 	Game(){
 		editor = new Editor();
@@ -64,6 +70,16 @@ public:
 			backgroundLayer->Attach(it);
 		}
 
+		for (int i = 0; i < 15; i++){
+			Sprite* bubble = new Sprite("Scenes/Bub_0.png");
+			bubble->visible = false;
+			bubble->enable = false;
+			this->Attach(bubble);
+			bubbles.push_back(bubble);
+		}
+
+		nextBubbleDelay = rand() % 4 + 1;
+
 		boss1_clear = false;
 		prevMonsterCreate = 0.0f;
 		nextMonsterCreate = 3;
@@ -84,6 +100,7 @@ public:
 		hardMonster->value = Editor::GetValue("Unit/Hard");
 		hardMonster->Hide();
 		this->Attach(hardMonster);
+
 
 		HudInit();
 		LayerInit();
@@ -143,12 +160,12 @@ public:
 			dt = 0.016;
 			if (game_stage == 1){
 				game_stage = 2;
+				player->Save();
 				SceneManager::LoadScene("Game");
 			}
 			else{
 				SceneManager::LoadScene("Ending");
 			}
-
 		};
 		clearLayer->Attach(button);
 
@@ -256,6 +273,13 @@ public:
 		gameStageText->zOrder = 4;
 		editor->AddEditor(gameStageText, "Scene/Game/gameStage");
 		this->Attach(gameStageText);
+
+		if (game_stage == 1)
+			game_stage_show = new Sprite("UI/UI_14.png");
+		else
+			game_stage_show = new Sprite("UI/UI_15.png");
+		game_stage_show->value.position = { 640, 360 };
+		this->Attach(game_stage_show);
 	}
 
 	void HudUpdate(){
@@ -264,6 +288,12 @@ public:
 
 		for (int i = 0; i < player->health; i++)
 			hearts[i]->visible = true;
+
+		if (game_stage_show != nullptr){
+			D3DXColorLerp(&game_stage_show->color, &game_stage_show->color, &Color(0, 0, 0, 0), 0.01f);
+			if (game_stage_show->color.a < 0.1)
+				game_stage_show->visible = false;
+		}
 
 		if (bossHealthBar != nullptr && hardMonster != nullptr)
 			bossHealthBar->SetValue(hardMonster->health);
@@ -329,11 +359,23 @@ public:
 		prevMonsterCreate += dt;
 		if (prevMonsterCreate >= nextMonsterCreate){
 			prevMonsterCreate = 0.0f;
-
+			nextMonsterCreate = rand() % 3 + 1;
 			auto monster = getMonster();
-			static_cast<NormalMonster*>(monster)->Init();
-			monster->value.position = { (float)(rand() % 1180 + 100), (float)-3 };
+			if (monster != nullptr){
+				static_cast<NormalMonster*>(monster)->Init();
+				monster->value.position = { (float)(rand() % 900 + 300), (float)-3 };
+			}
 		}
+
+		// ============================
+		prevBubbleDelay += dt;
+		if (prevBubbleDelay >= nextBubbleDelay){
+			prevBubbleDelay = 0.0f;
+			nextBubbleDelay = rand() % 2 + 1;
+			BubbleCreate();
+		}
+		BubbleUpdate();
+		// ============================
 
 		if (input->KeyDown(VK_ESCAPE)){
 			if (!pause){
@@ -382,5 +424,44 @@ public:
 		bossHealthBar = new FillSprite("hp.png", 550, hardMonster->health);
 		bossHealthBar->value = Editor::GetValue("Scene/Game/bossHealthBar");
 		bossHealthBackground->Attach(bossHealthBar);
+	}
+
+	void BubbleCreate(){
+		Sprite* bubble;
+		for (auto it : bubbles){
+			if (!it->visible || !it->enable){
+				it->visible = true;
+				it->enable = true;
+				bubble = it;
+				break;
+			}
+		}
+
+		bubble->value.position = { (float)(rand() % 1000 + 200), 800 };
+		bubble->color = Color(1, 1, 1, 0.5f);
+		float scale = rand() % 3 + 1;
+		bubble->value.scale = { scale, scale };
+	}
+
+	void BubbleUpdate(){
+		for (auto it : bubbles){
+			if (it->visible){
+				if (it->value.scale.x >= 3){
+					it->value.position.y -= 150 * dt;
+				}
+				else if (it->value.scale.x >= 2){
+					it->value.position.y -= 200 * dt;
+				}
+				else
+				{
+					it->value.position.y -= 250 * dt;
+				}
+
+				if (it->value.position.y < -30){
+					it->visible = false;
+					it->enable = false;
+				}
+			}
+		}
 	}
 };

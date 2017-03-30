@@ -13,6 +13,7 @@ void SceneManager::LoadScene(const string& name)
 {
 	Sprite::Clear();
 	UnitBase::units.clear();
+	Bullet::bullets.clear();
 
 	if (name.compare("MainMenu") == 0)
 	{

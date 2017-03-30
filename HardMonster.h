@@ -12,6 +12,8 @@ public:
 	}
 
 	void Init(int monster){
+		isDeath = false;
+
 		if (game_stage == 1){
 			if (monster == 1){
 				this->AddAnimation(new Animation("Unit/Shark/Young/Idle", 0.1f, true));

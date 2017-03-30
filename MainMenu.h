@@ -12,12 +12,14 @@ class MainMenu : public Node
 {
 public:
 	Editor* editor;
-	Sprite* pressButton;
+	TextString* pressButton;
 public:
 	Dialog* buttonsLayer;
 	Dialog* rankingLayer;
 	Dialog* tutorialLayer;
 	Sprite* tutorialImage;
+	Sprite* introImage;
+	float introDelay = 0.0f;
 public:
 	bool ismenu;
 	bool isranking;
@@ -36,25 +38,29 @@ public:
 		isranking = false;
 		istutorial = false;
 
+		Sprite* background = new Sprite();
+		background->value.position = { 640, 360 };
+		background->AddAnimation(new Animation("Scenes/MainMenu", 0.1f, true));
+		background->animation->Play();
+		this->Attach(background);
+
+		introImage = new Sprite("Scenes/intro.png");
+		introImage->value.position = { 640, 360 };
+		introImage->visible = false;
+		this->Attach(introImage);
+
 		MainMenuInit();
 		RankingInit();
 		TutorialInit();
-
-		cout << "MainMenu" << endl;
 	}
 
 	void RankingInit(){
 		rankingLayer = new Dialog();
 		this->Attach(rankingLayer);
 
-		//Sprite* background = new Sprite("Scenes/Tutorial/tu1.png");
-		//background->value.position = Vector2(1280 / 2, 720 / 2);
-		//rankingLayer->Attach(background);
-
 		Node* rankingListLayer = new Node();
 		rankingListLayer->value = Editor::GetValue("Scene/MainMenu/rankingList");
 		rankingLayer->Attach(rankingListLayer);
-		// editor->AddEditor(rankingLayer, "Scene/MainMenu/rankingList");
 
 		auto rankings = RankingData::Load();
 		for (int i = 0; i < rankings.size();i++){
@@ -82,8 +88,10 @@ public:
 	}
 
 	void MainMenuInit(){
-		pressButton = new Sprite("Scenes/press button.png");
-		pressButton->value.position = Vector2(640, 360);
+		pressButton = new TextString();
+		pressButton->value = Editor::GetValue("Scene/MainMenu/pressButton");
+		pressButton->SetString("Press SpaceBar");
+		editor->AddEditor(pressButton, "Scene/MainMenu/pressButton");
 		this->Attach(pressButton);
 
 		buttonsLayer = new Dialog();
@@ -92,7 +100,7 @@ public:
 		this->Attach(buttonsLayer);
 
 		// start
-		auto button = new Button("Scenes/IntroButton/Button_3.png");
+		auto button = new Button("UI/UI_19.png");
 		button->value = Editor::GetValue("Scene/MainMenu/start");
 		button->onClick = [=]()
 		{
@@ -102,7 +110,7 @@ public:
 		buttonsLayer->Attach(button);
 
 		// tutorial
-		button = new Button("Scenes/IntroButton/Button_5.png");
+		button = new Button("UI/UI_20.png");
 		button->value = Editor::GetValue("Scene/MainMenu/tutorial");
 		button->onClick = [=]()
 		{
@@ -114,14 +122,14 @@ public:
 		buttonsLayer->Attach(button);
 
 		// ranking
-		button = new Button("Scenes/IntroButton/Button_7.png");
+		button = new Button("UI/UI_21.png");
 		button->value = Editor::GetValue("Scene/MainMenu/ranking");
 		button->onClick = [=](){ isranking = true; istutorial = false; };
 		//editor->AddEditor(button, "Scene/MainMenu/ranking");
 		buttonsLayer->Attach(button);
 
 		// exit
-		button = new Button("Scenes/IntroButton/Button_9.png");
+		button = new Button("UI/UI_22.png");
 		button->value = Editor::GetValue("Scene/MainMenu/exit");
 		button->onClick = [](){ exit(0); };
 		//editor->AddEditor(button, "Scene/MainMenu/exit");
@@ -139,6 +147,7 @@ public:
 		else
 			tutorialLayer->Hide(Vector2(-1280, 0));
 
+
 		if (input->KeyDown(VK_ESCAPE)){
 			if (isranking){
 				isranking = false;
@@ -150,9 +159,14 @@ public:
 		}
 
 		if (input->KeyDown(VK_SPACE)){
-			if (!ismenu){
-				ismenu = true;
+			if (pressButton->visible){
+				introImage->visible = true;
 				pressButton->visible = false;
+			}
+			else if (introImage->visible)
+			{
+				ismenu = true;
+				introImage->visible = false;
 				buttonsLayer->enable = true;
 				buttonsLayer->visible = true;
 				buttonsLayer->Show(Vector2(0, 0));
@@ -172,5 +186,16 @@ public:
 		}
 
 		Cheat::Update();
+
+		if (introImage->visible){
+			introDelay += dt;
+			if (introDelay >= 6.0f){
+				ismenu = true;
+				introImage->visible = false;
+				buttonsLayer->enable = true;
+				buttonsLayer->visible = true;
+				buttonsLayer->Show(Vector2(0, 0));
+			}
+		}
 	}
 };

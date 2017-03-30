@@ -128,8 +128,8 @@ public:
 
 		texts.clear();
 		for (int i = 0; i < text.size(); i++){
-			Text* tmp = new Text();
-			if (text[i] != ' ' || text[i] != '-'){
+			if (text[i] != 32 && text[i] != '-'){
+				Text* tmp = new Text();
 				tmp->SetString(text[i]);
 				tmp->value.position.x = 170 * i;
 				this->Attach(tmp);

@@ -25,7 +25,7 @@ extern int game_stage;
 
 // 백업 용도
 extern int player_thirdBullet;
-extern int player_finalBullet;
+extern int player_hackBullet;
 extern int player_followBullet;
 
 class Input;

@@ -17,8 +17,12 @@ void Animation::Update(Sprite* sprite){
 			else
 			{
 				sprite->visible = visible;
+				sprite->enable = visible;
+
 				if (loop)
 					curIdx = 0;
+				else
+					animationEnable = false;
 			}
 		}
 	}

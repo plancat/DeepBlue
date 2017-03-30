@@ -9,6 +9,7 @@ public:
 	vector<Bullet*> bullets;
 	static vector<UnitBase*> units;
 	bool lockOn;
+	bool isDeath;
 public:
 	UnitBase(){
 		units.push_back(this);

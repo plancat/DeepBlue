@@ -36,6 +36,9 @@
     <Filter Include="Game\Unit\Monster">
       <UniqueIdentifier>{b4e09d26-a393-4b03-99cd-50717bf53819}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Item">
+      <UniqueIdentifier>{67ec4a27-3285-4ace-8ee3-d1555db0cbc4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="DXUT\Optional\directx.ico">
@@ -125,6 +128,9 @@
     <ClCompile Include="UnitBase.cpp">
       <Filter>Game\Unit\UnitBase</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Game\Unit\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -189,6 +195,12 @@
     </ClInclude>
     <ClInclude Include="Credit.h">
       <Filter>Game\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Game\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="todo.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
