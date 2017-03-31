@@ -34,7 +34,7 @@ public:
 		}
 		if (input->KeyDown(VK_SPACE))
 		{
-			game_stage = 0;
+			game_stage = 1;
 			SceneManager::LoadScene("Game");
 		}
 	}
