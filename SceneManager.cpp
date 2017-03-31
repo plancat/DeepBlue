@@ -1,13 +1,13 @@
 #include "SceneManager.h"
 #include "Game.h"
 #include "MainMenu.h"
-#include "Intro.h"
 #include "Initial.h"
-#include "Ending.h"
 #include "Credit.h"
+#include "Selection.h"
 
 Node* SceneManager::curScene = nullptr;
 Node* SceneManager::nextScene = nullptr;
+Game* Game::instance = nullptr;
 
 void SceneManager::LoadScene(const string& name)
 {
@@ -23,13 +23,8 @@ void SceneManager::LoadScene(const string& name)
 	{
 		nextScene = new Initial();
 	}
-	else if (name.compare("Ending") == 0)
-	{
-		nextScene = new Ending();
-	}
-	else if (name.compare("Intro") == 0)
-	{
-		nextScene = new Intro();
+	else if (name.compare("Selection") == 0){
+		nextScene = new Selection();
 	}
 	else if (name.compare("Game") == 0)
 	{

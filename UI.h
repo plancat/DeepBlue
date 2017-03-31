@@ -89,7 +89,7 @@ public:
 
 class Text : public Node
 {
-private:
+public:
 	char str;
 	Sprite* text_sprite = nullptr;
 public:

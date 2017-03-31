@@ -10,7 +10,7 @@ public:
 	Animation* death;
 	FillSprite* healthBar;
 public:
-	NormalMonster() : MonsterBase(3, 0.1f, 2.5f, 5){
+	NormalMonster() : MonsterBase(3, 0.1f, 2.5f, 10){
 		healthBar = new FillSprite("hp.png", 80, health);
 		healthBar->fillSprite->value.scale.y = 0.5f;
 		healthBar->value.position = Vector2(0, -45);
@@ -101,6 +101,7 @@ public:
 				Death();
 			}
 		}
+		DamageEffect();
 		healthBar->SetValue(health);
 	}
 
@@ -109,6 +110,6 @@ public:
 		this->animation->Stop();
 		this->AddAnimation(death);
 		this->animation->Play();
-		game_score += 150;
+		game_score += 70;
 	}
 };

@@ -60,6 +60,13 @@ public:
 		UpdateKey(VK_LCONTROL);
 		UpdateKey(VK_BACK);
 		UpdateKey(VK_RETURN);
+		UpdateKey(VK_F1);
+		UpdateKey(VK_F2);
+		UpdateKey(VK_F3);
+		UpdateKey(VK_F4);
+		UpdateKey(VK_F5);
+		UpdateKey(VK_F6);
+		UpdateKey(VK_F7);
 		for (int i = 'A'; i <= 'Z'; i++){
 			UpdateKey(i);
 		}

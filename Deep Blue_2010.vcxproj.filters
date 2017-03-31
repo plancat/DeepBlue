@@ -131,6 +131,9 @@
     <ClCompile Include="Player.cpp">
       <Filter>Game\Unit\Player</Filter>
     </ClCompile>
+    <ClCompile Include="Patern.cpp">
+      <Filter>Game\Unit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -163,16 +166,10 @@
     <ClInclude Include="Player.h">
       <Filter>Game\Unit\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Ending.h">
-      <Filter>Game\Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Game\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Initial.h">
-      <Filter>Game\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Intro.h">
       <Filter>Game\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="MainMenu.h">
@@ -201,6 +198,12 @@
     </ClInclude>
     <ClInclude Include="todo.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Selection.h">
+      <Filter>Game\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Patern.h">
+      <Filter>Game\Unit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

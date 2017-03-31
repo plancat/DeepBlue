@@ -62,14 +62,16 @@ public:
 	float delayTime;
 	vector<string> animations;
 	bool visible = false;
+	function<void()> _function;
 public:
-	Animation(const string& path = "", float delayTime = 0.1f, bool loop = false, bool visible = true) : delayTime(delayTime), loop(loop), visible(visible) {
+	Animation(const string& path = "", float delayTime = 0.1f, bool loop = false, bool visible = true, function<void()> _function = [](){}) : delayTime(delayTime), loop(loop), visible(visible), _function(_function){
 		curIdx = 0;
 		animationEnable = false;
 		animations = Path::GetFiles(path);
 		for (auto it : animations){
 			Texture::Load(it);
 		}
+
 	}
 
 	void Play(){

@@ -44,6 +44,10 @@ public:
 		background->animation->Play();
 		this->Attach(background);
 
+		Sprite* title = new Sprite("Title.png");
+		title->value.position = { 640, 360 };
+		this->Attach(title);
+
 		introImage = new Sprite("Scenes/intro.png");
 		introImage->value.position = { 640, 360 };
 		introImage->visible = false;
@@ -63,7 +67,7 @@ public:
 		rankingLayer->Attach(rankingListLayer);
 
 		auto rankings = RankingData::Load();
-		for (int i = 0; i < rankings.size();i++){
+		for (int i = 0; i < rankings.size(); i++){
 			TextString* name = new TextString();
 			name->SetString(rankings[i].name);
 			name->value.scale = { 0.45, 0.45 };
@@ -82,7 +86,7 @@ public:
 		tutorialLayer = new Dialog();
 		this->Attach(tutorialLayer);
 
-		tutorialImage = new Sprite("Scenes/Tutorial/tu1.png");
+		tutorialImage = new Sprite("UI/UI_25.png");
 		tutorialImage->value.position = Vector2(640, 360);
 		tutorialLayer->Attach(tutorialImage);
 	}
@@ -104,7 +108,7 @@ public:
 		button->value = Editor::GetValue("Scene/MainMenu/start");
 		button->onClick = [=]()
 		{
-			SceneManager::LoadScene("Game");
+			SceneManager::LoadScene("Selection");
 		};
 		// editor->AddEditor(button, "Scene/MainMenu/start");
 		buttonsLayer->Attach(button);
@@ -114,9 +118,13 @@ public:
 		button->value = Editor::GetValue("Scene/MainMenu/tutorial");
 		button->onClick = [=]()
 		{
-			isranking = false; istutorial = true;
-			tutorialIdx = 1;
-			tutorialImage->texture = Texture::Load("Scenes/Tutorial/tu" + to_string(tutorialIdx) + ".png");
+			if (istutorial){
+				isranking = false;
+				istutorial = false;
+				return;
+			}
+			isranking = false;
+			istutorial = true;
 		};
 		//editor->AddEditor(button, "Scene/MainMenu/tutorial");
 		buttonsLayer->Attach(button);
@@ -124,7 +132,16 @@ public:
 		// ranking
 		button = new Button("UI/UI_21.png");
 		button->value = Editor::GetValue("Scene/MainMenu/ranking");
-		button->onClick = [=](){ isranking = true; istutorial = false; };
+		button->onClick = [=]()
+		{
+			if (isranking){
+				isranking = false;
+				istutorial = false;
+				return;
+			}
+			isranking = true;
+			istutorial = false;
+		};
 		//editor->AddEditor(button, "Scene/MainMenu/ranking");
 		buttonsLayer->Attach(button);
 

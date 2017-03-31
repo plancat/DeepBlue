@@ -23,6 +23,8 @@ void Animation::Update(Sprite* sprite){
 					curIdx = 0;
 				else
 					animationEnable = false;
+
+				_function();
 			}
 		}
 	}

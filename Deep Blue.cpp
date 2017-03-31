@@ -141,11 +141,19 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, int )
 	DXUTSetHotkeyHandling(false, false, false);  // handle the default hotkeys
     DXUTSetCursorSettings( true, true ); // Show the cursor and clip it when in full screen
     DXUTCreateWindow( L"Deep Blue" );
-    DXUTCreateDevice( true, 1280, 720 );
+    DXUTCreateDevice( false, 1280, 720 );
 
 	srand(time(nullptr));
 
-	SceneManager::LoadScene("Game");
+	Sprite* empty = new Sprite();
+	empty->AddAnimation(new Animation("Unit/Shark/Young/Idle", 0.1f, true));
+	empty->AddAnimation(new Animation("Unit/Shark/Adult/Idle", 0.1f, true));
+	empty->AddAnimation(new Animation("Unit/Axolotl/Young/Idle", 0.1f, true));
+	empty->AddAnimation(new Animation("Unit/Axolotl/Adult/Idle", 0.1f, true));
+	empty->AddAnimation(new Animation("Scenes/MainMenu", 0.1f, true));
+	empty->Destroy();
+
+	SceneManager::LoadScene("MainMenu");
 
     // Start the render loop
     DXUTMainLoop();

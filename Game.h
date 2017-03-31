@@ -11,6 +11,7 @@
 #include "Player.h"
 #include "HardMonster.h"
 #include "NormalMonster.h"
+#include "Item.h"
 
 class Game : public Node
 {
@@ -39,18 +40,49 @@ private:
 
 	bool pause = false;
 	bool isBoss = false;
-	bool boss1_clear;
+	bool boss1_clear = false;
+	bool isBossClear = false;
+	float prevBossClearTime = 0.0f;
 
 	TextString* gameScoreText;
 	TextString* gameStageText;
 
 	Sprite* game_stage_show;
+	Sprite* game_stage_background;
 
-		vector<Sprite*> bubbles;
+	bool isWarning;
+	int warningCount;
+	bool warningColor;
+	Sprite* warning;
+
+	vector<Sprite*> bubbles;
 	float prevBubbleDelay = 0.0f;
 	float nextBubbleDelay = 0.0f;
+
+	vector<Item*> items;
+	float prevItemDelay = 0.0f;
+	float nextItemDelay = 0.0f;
+
+	Node* bulletCountLayer;
+	Text* bulletCount[3];
+
+	Sprite* comboLayer;
+	Text* comboCount[4];
+	Vector2 comboScale;
+	Vector2 comboLayerScale;
+	bool comboEnable = false;
+	float prevComboEnalbe = 0.0f;
+
+	Sprite* nuclearEffect;
+	bool isNuclearEffect;
+
+	float prevBossShowDelay = 0.0f;
+	float nextBossShowDely = 0.0f;
 public:
+	static Game* instance;
 	Game(){
+		instance = this;
+
 		editor = new Editor();
 		this->Attach(editor);
 		input = new Input();
@@ -60,6 +92,9 @@ public:
 
 		bossHealthBar = nullptr;
 		hardMonster = nullptr;
+
+		isBossClear = false;
+		prevBossClearTime = 0.0f;
 
 		if (game_stage == 1)
 			backgrounds = Editor::GetBackgrounds("Scene/Game/Game1");
@@ -76,6 +111,14 @@ public:
 			bubble->enable = false;
 			this->Attach(bubble);
 			bubbles.push_back(bubble);
+		}
+
+		for (int i = 0; i < 10; i++){
+			Item* item = new Item();
+			item->visible = false;
+			item->enable = false;
+			this->Attach(item);
+			items.push_back(item);
 		}
 
 		nextBubbleDelay = rand() % 4 + 1;
@@ -101,9 +144,15 @@ public:
 		hardMonster->Hide();
 		this->Attach(hardMonster);
 
-
 		HudInit();
 		LayerInit();
+
+		nuclearEffect = new Sprite();
+		nuclearEffect->value.position = { 640, 360 };
+		this->Attach(nuclearEffect);
+		isNuclearEffect = false;
+
+		nextBossShowDely = 40;
 	}
 
 	void LayerInit(){
@@ -158,13 +207,14 @@ public:
 		button->onClick = [=]()
 		{
 			dt = 0.016;
+			player_combo = 0;
 			if (game_stage == 1){
 				game_stage = 2;
 				player->Save();
 				SceneManager::LoadScene("Game");
 			}
 			else{
-				SceneManager::LoadScene("Ending");
+				SceneManager::LoadScene("Credit");
 			}
 		};
 		clearLayer->Attach(button);
@@ -274,12 +324,67 @@ public:
 		editor->AddEditor(gameStageText, "Scene/Game/gameStage");
 		this->Attach(gameStageText);
 
+		bulletCountLayer = new Node();
+		bulletCountLayer->value = Editor::GetValue("Scene/Game/bulletLayer");
+		editor->AddEditor(bulletCountLayer, "Scene/Game/bulletLayer");
+		bulletCountLayer->zOrder = 4;
+		this->Attach(bulletCountLayer);
+
+		// 총알 개수 표시하기;
+		for (int i = 0; i < 3; i++){
+			bulletCount[i] = new Text();
+			bulletCount[i]->SetString("1");
+			bulletCount[i]->value.position.x += 220 * i;
+			bulletCountLayer->Attach(bulletCount[i]);
+		}
+
+		comboLayer = new Sprite("Combo/Combo.png");
+		comboLayer->value.position = { 640, 260 };
+		comboLayer->value.scale = { 0.8, 0.8 };
+		this->Attach(comboLayer);
+
+		for (int i = 0; i < 4; i++){
+			comboCount[i] = new Text();
+			comboCount[i]->SetString("0");
+			comboCount[i]->value.scale = { 0.8, 0.8 };
+			comboCount[i]->value.position.x -= 120;
+			comboCount[i]->value.position.x += 80 * i;
+			comboCount[i]->value.position.y = 100;
+			comboLayer->Attach(comboCount[i]);
+		}
+
+		Sprite* character;
+		if (player_sex == 0)
+			character = new Sprite("UI/Boy.png");
+		else
+			character = new Sprite("UI/Girl.png");
+		character->value = Editor::GetValue("Scene/Game/character");
+		editor->AddEditor(character, "Scene/Game/character");
+		character->zOrder = 4;
+		this->Attach(character);
+
+
 		if (game_stage == 1)
 			game_stage_show = new Sprite("UI/UI_14.png");
 		else
 			game_stage_show = new Sprite("UI/UI_15.png");
 		game_stage_show->value.position = { 640, 360 };
 		this->Attach(game_stage_show);
+
+		game_stage_background = new Sprite("UI/UI_0.png");
+		game_stage_background->value.position = { 640, 360 };
+		game_stage_background->zOrder = 4;
+		this->Attach(game_stage_background);
+
+		warning = new Sprite("UI/UI_18.png");
+		warning->value.position = { 640, 360 };
+		warning->zOrder = 5;
+		warning->visible = false;
+		this->Attach(warning);
+
+		isWarning = false;
+		warningCount = 0;
+		warningColor = false;
 	}
 
 	void HudUpdate(){
@@ -290,10 +395,17 @@ public:
 			hearts[i]->visible = true;
 
 		if (game_stage_show != nullptr){
-			D3DXColorLerp(&game_stage_show->color, &game_stage_show->color, &Color(0, 0, 0, 0), 0.01f);
+			D3DXColorLerp(&game_stage_show->color, &game_stage_show->color, &Color(0, 0, 0, 0), 0.02f);
 			if (game_stage_show->color.a < 0.1)
 				game_stage_show->visible = false;
 		}
+
+		if (game_stage_background != nullptr){
+			D3DXColorLerp(&game_stage_background->color, &game_stage_background->color, &Color(0, 0, 0, 0), 0.02f);
+			if (game_stage_background->color.a < 0.1)
+				game_stage_background->visible = false;
+		}
+
 
 		if (bossHealthBar != nullptr && hardMonster != nullptr)
 			bossHealthBar->SetValue(hardMonster->health);
@@ -321,10 +433,94 @@ public:
 				}
 			}
 		}
+
+		bulletCount[0]->SetString(to_string(player->followBulletCnt));
+		bulletCount[1]->SetString(to_string(player->thirdBulletCnt));
+		bulletCount[2]->SetString(to_string(player->hackBulletCnt));
+
+		if (player_combo > 20){
+			int one = (((player_combo % 1000) % 100) % 10);
+			int ten = ((player_combo % 1000) % 100) / 10;
+			int hundred = (player_combo % 1000) / 100;
+			int thousand = player_combo / 1000;
+
+			if (thousand < 10)
+				comboCount[0]->SetString(to_string(thousand));
+			if (hundred < 10)
+				comboCount[1]->SetString(to_string(hundred));
+			if (ten < 10)
+				comboCount[2]->SetString(to_string(ten));
+			if (one < 10)
+				comboCount[3]->SetString(to_string(one));
+			comboScale *= 0.9f;
+			comboLayerScale *= 0.9f;
+
+			if (comboScale.x < 0.8f || comboScale.y < 0.8f)
+				comboScale = { 0.8f, 0.8f };
+
+			if (comboLayerScale.x < 1.0f || comboLayerScale.y < 1.0f)
+				comboLayerScale = { 1.0f, 1.0f };
+
+			for (int i = 0; i < 4; i++){
+				comboCount[i]->value.scale = comboScale;
+			}
+			comboLayer->value.scale = comboLayerScale;
+		}
+		if (comboEnable){
+			D3DXColorLerp(&comboLayer->color, &comboLayer->color, &Color(1, 1, 1, 1), 0.1f);
+			for (int i = 0; i < 4; i++){
+				D3DXColorLerp(&comboCount[i]->text_sprite->color, &comboCount[i]->text_sprite->color, &Color(1, 1, 1, 1), 0.1f);
+			}
+			prevComboEnalbe += dt;
+			if (prevComboEnalbe >= 1.0f){
+				prevComboEnalbe = 0.0f;
+				comboEnable = false;
+			}
+		}
+		if (!comboEnable){
+			D3DXColorLerp(&comboLayer->color, &comboLayer->color, &Color(1, 1, 1, 0), 0.1f);
+			for (int i = 0; i < 4; i++){
+				D3DXColorLerp(&comboCount[i]->text_sprite->color, &comboCount[i]->text_sprite->color, &Color(1, 1, 1, 0), 0.1f);
+			}
+		}
+		// ===========================
+
+		if (isWarning){
+			if (!warningColor){
+				D3DXColorLerp(&warning->color, &warning->color, &Color(1, 1, 1, 0), 0.1f);
+				if (warning->color.a < 0.1f){
+					warningColor = true;
+					warningCount += 1;
+				}
+			}
+			else{
+				D3DXColorLerp(&warning->color, &warning->color, &Color(1, 1, 1, 1), 0.1f);
+				if (warning->color.a > 0.9f){
+					warningColor = false;
+					warningCount += 1;
+				}
+			}
+			if (warningCount > 4){
+				isWarning = false;
+				warning->visible = false;
+				warning->color.a = 1.0f;
+				warningCount = 0;
+				ShowBossMonster();
+			}
+		}
+		// ============================
+		if (isNuclearEffect){
+			D3DXColorLerp(&nuclearEffect->color, &nuclearEffect->color, &Color(1, 1, 1, 0), 0.05f);
+			if (nuclearEffect->color.a < 0.1f){
+				isNuclearEffect = false;
+				nuclearEffect->visible = false;
+			}
+		}
 	}
 
 	void OnUpdate() override {
 		Cheat::Update();
+
 		HudUpdate();
 		BackgroundUpdate();
 
@@ -334,23 +530,48 @@ public:
 			dt = 0.0f;
 		}
 
+		if (!isBoss){
+			prevBossShowDelay += dt;
+			if (prevBossShowDelay >= nextBossShowDely){
+				prevBossShowDelay = 0.0f;
+				ShowWarning();
+			}
+		}
+
 		if (hardMonster != nullptr)
 		{
 			if (hardMonster->health <= 0)
 			{
-				if (isBoss){
+				if (isBoss)
+				{
 					isBoss = false;
-					if (!boss1_clear)
-					{
-						boss1_clear = true;
-						bossHealthBackground->visible = false;
-						backgroundLayer->enable = true;
-					}
-					else{
-						clearLayer->visible = true;
-						clearLayer->enable = true;
-						dt = 0.0f;
-					}
+					isBossClear = true;
+					prevBossClearTime = 0.0f;
+				}
+			}
+		}
+
+		if (isBossClear)
+		{
+			hardMonster->Hide();
+			prevBossClearTime += dt;
+			if (prevBossClearTime >= 2.0f){
+				prevBossClearTime = 0.0f;
+
+				isBoss = false;
+				isBossClear = false;
+
+				if (!boss1_clear)
+				{
+					boss1_clear = true;
+					bossHealthBackground->visible = false;
+					backgroundLayer->enable = true;
+				}
+				else
+				{
+					clearLayer->visible = true;
+					clearLayer->enable = true;
+					dt = 0.0f;
 				}
 			}
 		}
@@ -376,7 +597,8 @@ public:
 		}
 		BubbleUpdate();
 		// ============================
-
+		ItemUpdate();
+		// ============================
 		if (input->KeyDown(VK_ESCAPE)){
 			if (!pause){
 				pause = true;
@@ -384,18 +606,6 @@ public:
 				pauseLayer->visible = true;
 				pauseLayer->enable = true;
 			}
-		}
-
-		if (input->KeyDown(VK_SPACE)){
-			ShowBossMonster();
-		}
-
-		if (input->KeyDown(VK_BACK)){
-			player->Damage(5);
-		}
-
-		if (input->KeyDown('N')){
-			hardMonster->Damage(50);
 		}
 	}
 
@@ -407,6 +617,13 @@ public:
 				return it;
 			}
 		}
+	}
+
+	void ShowWarning(){
+		isWarning = true;
+		warning->visible = true;
+		warning->color.a = 1.0f;
+		warningCount = 0;
 	}
 
 	void ShowBossMonster(){
@@ -463,5 +680,71 @@ public:
 				}
 			}
 		}
+	}
+
+	void ItemCreate(){
+		Item* item = nullptr;
+		for (auto it : items){
+			if (!it->visible || !it->enable){
+				it->visible = true;
+				it->enable = true;
+				it->zOrder = 2;
+				item = it;
+				break;
+			}
+		}
+		if (item != nullptr){
+			int rd = rand() % 2;
+			// 장애물
+			if (rd == 0){
+				item->Init(ItemType::HUDDLE);
+				item->value.scale = { 0.5, 0.5 };
+				item->value.rectScale = { 0.3, 0.3 };
+				item->value.position = { (float)(rand() % 1000 + 200), -20 };
+			}
+			else
+			{
+				item->Init(ItemType::ITEM);
+				item->value.scale = { 0.3, 0.3 };
+				item->value.rectScale = { 0.3, 0.3 };
+				item->value.position = { (float)(rand() % 1000 + 200), 20 };
+			}
+		}
+	}
+
+	void ItemUpdate(){
+		prevItemDelay += dt;
+		if (prevItemDelay >= nextItemDelay){
+			prevItemDelay = 0.0f;
+			nextItemDelay = rand() % 5 + 3;
+			ItemCreate();
+		}
+	}
+
+	void ComboEnable(){
+		if (player_combo > 50){
+			comboLayerScale = { 1.3f, 1.3f };
+			comboScale = { 1.2f, 1.2f };
+			comboEnable = true;
+			prevComboEnalbe = 0.0f;
+		}
+	}
+
+	void Nuclear(){
+		nuclearEffect->AddAnimation(new Animation("Nuclear", 0.1f, false, true, [=]()
+		{
+			isNuclearEffect = true;
+
+			for (auto it : UnitBase::units){
+				if (it->visible){
+					if (it->tag.compare("Player") != 0){
+						it->Damage(50);
+					}
+				}
+			}
+		}));
+		nuclearEffect->visible = true;
+		nuclearEffect->color.a = 1.0f;
+		nuclearEffect->animation->Play();
 	}
 };

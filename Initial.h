@@ -42,10 +42,10 @@ public:
 		missionComplate->value = Editor::GetValue("Scene/Initial/mission");
 		missionComplate->onClick = [=]()
 		{
+			RankingData::Load();
 			RankingData::Add(RankingData(str, game_score));
 			RankingData::Save();
-			RankingData::Load();
-			SceneManager::LoadScene("Credit");
+			SceneManager::LoadScene("MainMenu");
 		};
 		this->Attach(missionComplate);
 	}
@@ -68,10 +68,10 @@ public:
 		}
 
 		if (input->KeyDown(VK_RETURN)){
+			RankingData::Load();
 			RankingData::Add(RankingData(str, game_score));
 			RankingData::Save();
-			RankingData::Load();
-			SceneManager::LoadScene("Credit");
+			SceneManager::LoadScene("MainMenu");
 		}
 
 		for (int i = 0; i < 3; i++){

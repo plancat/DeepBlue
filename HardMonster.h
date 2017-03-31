@@ -23,7 +23,7 @@ public:
 			else if (monster == 2){
 				this->AddAnimation(new Animation("Unit/Shark/Adult/Idle", 0.1f, true));
 				this->animation->Play();
-				this->health = 100;
+				this->health = 200;
 			}
 		}
 		else
@@ -31,12 +31,12 @@ public:
 			if (monster == 1){
 				this->AddAnimation(new Animation("Unit/Axolotl/Young/Idle", 0.1f, true));
 				this->animation->Play();
-				this->health = 100;
+				this->health = 300;
 			}
 			else if (monster == 2){
 				this->AddAnimation(new Animation("Unit/Axolotl/Adult/Idle", 0.1f, true));
 				this->animation->Play();
-				this->health = 100;
+				this->health = 400;
 			}
 		}
 	}
@@ -61,5 +61,14 @@ public:
 
 	void Show() {
 		show = true;
+	}
+
+	void Damage(int power) override {
+		MonsterBase::Damage(power);
+		DamageEffect();
+	}
+
+	void Death() override {
+		Hide();
 	}
 };

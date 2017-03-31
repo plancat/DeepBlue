@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "UnitBase.h"
 #include "Bullet.h"
+#include "Patern.h"
 
 class MonsterBase : public UnitBase
 {
@@ -18,6 +19,7 @@ private:
 
 	bool isAttack = false;
 	bool isAttackReady = false;
+	Patern* patern;
 public:
 	MonsterBase(int attackCnt, float attackDelay, float nextAttackDelay, int bulletCnt) :
 		nextAttackCnt(attackCnt),
@@ -26,6 +28,8 @@ public:
 		prevAttackCnt = 0;
 		prevAttackDelay = 0.0f;
 		prevNextAttackDelay = 0.0f;
+
+		patern = new Patern();
 
 		for (int i = 0; i < bulletCnt; i++){
 			auto bullet = new Bullet(BulletType::MONSTER, { 0, 1 });
@@ -51,6 +55,10 @@ public:
 		});
 	}
 
+	~MonsterBase(){
+		delete patern;
+	}
+
 	void Attack(){
 		if (isAttackReady){
 			if (!isAttack){
@@ -59,28 +67,35 @@ public:
 				prevNextAttackDelay = 0.0f;
 				isAttackReady = false;
 				isAttack = true;
+
+				int rd = rand() % 3;
+
+				switch (rd){
+				case 0:
+					patern->paternType = PaternType::ONE_LINE;
+					break;
+				case 1: 
+					patern->paternType = PaternType::PLAYER;
+					break;
+				case 2:
+					patern->paternType = PaternType::BUTTERFLY;
+					break;
+				}
 			}
 		}
 	}
 
 	void OnUpdate() override {
 		UnitBase::OnUpdate();
+		DamageEffectUpdate();
+
 		if (isAttack){
 			prevAttackDelay += dt;
 			if (prevAttackDelay >= nextAttackDelay){
 				prevAttackCnt += 1;
 				prevAttackDelay = 0.0f;
-
-				// cout << "Attack" << endl;
-
-				auto bullet = getBullet();
-				if (bullet != nullptr){
-					bullet->texture = Texture::Load("Bullet/0_0.png");
-					bullet->dir = { 0, 1 };
-					bullet->value.rectScale = { 0.3, 0.3 };
-					bullet->speed = 0.0f;
-					bullet->value.position = this->value.position + Vector2(0, 5);
-				}
+				// patern
+				patern->PaternAttack(this);
 			}
 			if (prevAttackCnt >= nextAttackCnt){
 				isAttack = false;

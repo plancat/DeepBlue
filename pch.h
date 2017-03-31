@@ -24,9 +24,12 @@ extern int game_score;
 extern int game_stage;
 
 // 백업 용도
+extern int player_sex;
 extern int player_thirdBullet;
 extern int player_hackBullet;
 extern int player_followBullet;
+extern int player_weaponUpgrade;
+extern int player_combo;
 
 class Input;
 extern Input* input;
@@ -49,6 +52,7 @@ private:
 	static vector<RankingData> rankingDatas;
 public:
 	static vector<RankingData> Load(){
+		rankingDatas.clear();
 		vector<RankingData> tempRanking;
 		auto is = ifstream("Resources/Ranking.txt");
 		for (int i = 0; i < 4; i++){
@@ -57,6 +61,7 @@ public:
 			rankingDatas.push_back(rankingData);
 			cout << "Ranking : " << rankingData.name << " " << rankingData.score << endl;
 			tempRanking.push_back(rankingData);
+			rankingDatas.push_back(rankingData);
 		}
 		is.close();
 
